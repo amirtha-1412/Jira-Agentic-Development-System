@@ -16,25 +16,67 @@ The frontend dashboard visualizes all of this live. You can watch each agent's s
 
 ## System Architecture
 
+The system is split into two layers: a FastAPI backend that orchestrates the AI agents, and a React frontend that visualizes the pipeline in real time.
+
+```mermaid
+graph TD
+    A["Jira Ticket"] --> B["Requirement Analyst Agent"]
+    B --> C["Developer Agent"]
+    C --> D["QA Agent"]
+    D --> E["PR Generator"]
+    E --> F["Frontend Dashboard"]
+
+    B -- "7-section analysis" --> F
+    C -- "Generated code" --> F
+    D -- "Test results" --> F
+    E -- "Reasoning trace" --> F
+
+    G["ChromaDB Vector Store"] -- "RAG context" --> B
+    H["Jira API"] -- "Ticket data" --> B
 ```
-Jira Ticket
-     |
-     v
-Requirement Analyst Agent
-     |  Parses ticket into functional requirements, technical specs,
-     |  affected files, implementation steps, risks, and ambiguities
-     v
-Developer Agent
-     |  Generates repository-aware implementation code
-     v
-QA Agent
-     |  Writes and validates test cases
-     v
-PR Generator
-     |  Drafts a pull request with description and diff summary
-     v
-Frontend Dashboard
-     Visualizes the full pipeline in real time
+
+---
+
+## Component Architecture
+
+The diagram below shows how the backend modules relate to each other and how the frontend connects through the API layer.
+
+```mermaid
+graph LR
+    subgraph Frontend
+        UI["React Dashboard"]
+        AX["Axios API Service"]
+    end
+
+    subgraph Backend
+        FA["FastAPI main.py"]
+        JR["Jira Router"]
+        AR["Analyst Router"]
+        VR["Retrieval Router"]
+    end
+
+    subgraph Agents
+        RA["Requirement Analyst"]
+        LLM["LLM Client"]
+        PRM["Prompt Templates"]
+    end
+
+    subgraph Storage
+        CHR["ChromaDB"]
+        JIRA["Jira Cloud"]
+    end
+
+    UI --> AX
+    AX --> FA
+    FA --> JR
+    FA --> AR
+    FA --> VR
+    AR --> RA
+    RA --> LLM
+    RA --> PRM
+    VR --> CHR
+    JR --> JIRA
+    RA --> CHR
 ```
 
 ---
@@ -245,7 +287,31 @@ The test suite covers the LLM client, Jira connector, ticket parser, vector stor
 
 ## Frontend at a Glance
 
-The dashboard has eight components working together:
+The dashboard has eight components working together. The data flow from user action through to displayed results follows this path:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Dashboard
+    participant API as Axios API Service
+    participant Backend as FastAPI Backend
+    participant Agent as AI Agents
+
+    User->>Dashboard: Fill ticket form
+    User->>Dashboard: Click Execute Pipeline
+    Dashboard->>API: POST /analyst/analyze
+    API->>Backend: HTTP Request
+    Backend->>Agent: Run Requirement Analyst
+    Agent-->>Backend: Analysis result
+    Backend-->>API: JSON response
+    API-->>Dashboard: Update result state
+    Dashboard->>API: POST /analyst/engineering-tasks
+    Dashboard->>API: POST /analyst/edge-cases
+    Dashboard->>API: POST /analyst/reasoning
+    Dashboard-->>User: Show results, logs, timeline
+```
+
+Component overview:
 
 - **Navbar** — Shows backend connection status updated every 15 seconds
 - **JiraFetchBar** — Enter a ticket ID to pull real data from Jira into the form
