@@ -1,0 +1,28 @@
+# ─── Python ─────────────────────────────────
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.md
+# ─── Environment & Secrets ──────────────────
+.env
+*.env.local
+
+# ─── Node / Frontend ────────────────────────
+node_modules/
+.next/
+dist/
+
+# ─── Vector Store ───────────────────────────
+vectorstore/chroma_db/
+
+# ─── IDE & OS ───────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
