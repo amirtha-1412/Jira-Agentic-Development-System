@@ -1,72 +1,72 @@
-# 🤖 Jira Agentic Development System
+# Jira Agentic Development System
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-green.svg)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-Latest-orange.svg)](https://github.com/langchain-ai/langgraph)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A **multi-agent AI platform** that autonomously handles the complete software development lifecycle — from Jira ticket analysis through code generation, testing, and pull request creation. Powered by LLM-based agents orchestrated through **LangGraph**, with real-time visualization and intelligent retry logic.
 
-> 🎯 **Built to demonstrate autonomous AI-driven development in practice, not just theory.**
+**Built to demonstrate autonomous AI-driven development in practice, not just theory.**
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [System Architecture](#-system-architecture)
-- [Workflow Diagrams](#-workflow-diagrams)
-- [Quick Start](#-quick-start)
-- [Project Structure](#-project-structure)
-- [API Reference](#-api-reference)
-- [Testing](#-testing)
-- [Configuration](#-configuration)
-- [Troubleshooting](#-troubleshooting)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Workflow Diagrams](#workflow-diagrams)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [API Reference](#api-reference)
+- [Testing](#testing)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
-## 🎯 Overview
+## Overview
 
 ### What It Does
 
 Transform a Jira ticket into production-ready code through an autonomous multi-agent pipeline:
 
-1. **📊 Requirement Analysis** - Extracts functional/technical requirements, identifies risks
-2. **💻 Code Generation** - Creates repository-aware implementation code
-3. **🧪 Quality Assurance** - Generates and validates comprehensive test cases
-4. **📝 PR Creation** - Drafts pull requests with descriptions and summaries
+1. **Requirement Analysis** - Extracts functional/technical requirements, identifies risks
+2. **Code Generation** - Creates repository-aware implementation code
+3. **Quality Assurance** - Generates and validates comprehensive test cases
+4. **PR Creation** - Drafts pull requests with descriptions and summaries
 
 ### Why It Matters
 
-- ⚡ **Accelerates Development** - Automates repetitive coding tasks
-- 🎯 **Maintains Quality** - Built-in QA validation with retry logic
-- 📈 **Scales Teams** - Handles multiple tickets concurrently
-- 🔍 **Full Transparency** - Every decision is logged and explainable
+- **Accelerates Development** - Automates repetitive coding tasks
+- **Maintains Quality** - Built-in QA validation with retry logic
+- **Scales Teams** - Handles multiple tickets concurrently
+- **Full Transparency** - Every decision is logged and explainable
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-### 🤖 Multi-Agent Architecture
-- **4 Specialized Agents** - Each expert in their domain
+### Multi-Agent Architecture
+- **6 Specialized Agents** - Each expert in their domain
 - **LangGraph Orchestration** - Intelligent workflow management
 - **Automatic Retry Logic** - Self-healing on QA failures
 - **Parallel Processing** - Handle multiple tickets simultaneously
 
-### 🔗 Jira Integration
+### Jira Integration
 - **Direct API Connection** - Fetch tickets in real-time
 - **Bidirectional Sync** - Update ticket status automatically
 - **JQL Support** - Advanced ticket filtering
 - **Multi-Project** - Support for multiple Jira projects
 
-### 🧠 RAG-Powered Intelligence
+### RAG-Powered Intelligence
 - **ChromaDB Vector Store** - Semantic code search
 - **Repository Awareness** - Context-aware code generation
 - **Smart Retrieval** - Only relevant code in context
 - **Incremental Indexing** - Efficient codebase updates
 
-### 📊 Real-Time Monitoring
+### Real-Time Monitoring
 - **Live Dashboard** - Watch agents work in real-time
 - **Detailed Logging** - Complete audit trail
 - **Health Checks** - Monitor system status
@@ -74,7 +74,7 @@ Transform a Jira ticket into production-ready code through an autonomous multi-a
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ### High-Level Architecture
 
@@ -155,7 +155,7 @@ graph TB
 
 ---
 
-## 🔄 Workflow Diagrams
+## Workflow Diagrams
 
 ### Complete Agent Workflow
 
@@ -205,15 +205,15 @@ sequenceDiagram
         QA->>QA: Run validation
         
         alt Tests Pass
-            QA-->>LG: Tests passed ✓
+            QA-->>LG: Tests passed
         else Tests Fail
-            QA-->>LG: Tests failed ✗
+            QA-->>LG: Tests failed
             LG->>DA: Regenerate code (retry)
             DA->>LLM: Fix issues
             LLM-->>DA: Fixed code
             DA-->>LG: Code updated
             LG->>QA: Re-validate
-            QA-->>LG: Tests passed ✓
+            QA-->>LG: Tests passed
         end
     end
     
@@ -417,14 +417,14 @@ graph TD
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
-- **Python 3.10+**
-- **Node.js 18+** (for frontend)
+- **Python 3.11+**
+- **Node.js 18+** (for frontend, optional)
 - **Jira Account** with API token
-- **Groq API Key** (or OpenAI)
+- **Groq API Key** (free at console.groq.com)
 
 ### 1. Clone Repository
 
@@ -499,7 +499,7 @@ print(result)
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Jira-Agentic-Development-System/
@@ -571,7 +571,7 @@ Jira-Agentic-Development-System/
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### Core Endpoints
 
@@ -641,7 +641,7 @@ GET  /retrieval/status             # Indexing status
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Test Suite Overview
 
@@ -701,17 +701,17 @@ python fix_issues.py
 
 | Component | Coverage | Status |
 |-----------|----------|--------|
-| Jira Connector | 95% | ✅ |
-| Requirement Analyst | 90% | ✅ |
-| Developer Agent | 85% | ✅ |
-| QA Agent | 88% | ✅ |
-| PR Generator | 82% | ✅ |
-| LangGraph Workflow | 92% | ✅ |
-| Vector Store | 87% | ✅ |
+| Jira Connector | 95% | Pass |
+| Requirement Analyst | 90% | Pass |
+| Developer Agent | 85% | Pass |
+| QA Agent | 88% | Pass |
+| PR Generator | 82% | Pass |
+| LangGraph Workflow | 92% | Pass |
+| Vector Store | 87% | Pass |
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -766,7 +766,7 @@ VERBOSE = True               # Enable detailed logging
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -854,7 +854,7 @@ result = execute_workflow(
 
 ---
 
-## 📊 Performance Metrics
+## Performance Metrics
 
 ### Typical Execution Times
 
@@ -875,7 +875,7 @@ result = execute_workflow(
 
 ---
 
-## 🎯 Use Cases
+## Use Cases
 
 ### 1. Feature Development
 ```bash
@@ -929,7 +929,7 @@ jobs:
 
 ---
 
-## 🚀 Deployment
+## Deployment
 
 ### Docker Deployment
 
@@ -980,18 +980,16 @@ services:
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-- **[Workflow Architecture](docs/WORKFLOW_ARCHITECTURE.md)** - Detailed workflow design
-- **[Workflow Implementation](docs/WORKFLOW_IMPLEMENTATION.md)** - Implementation guide
-- **[API Documentation](http://localhost:8000/docs)** - Interactive API docs
-- **[Test Results](JIRA_TEST_RESULTS.md)** - Comprehensive test report
-- **[Quick Start Guide](QUICK_TEST_GUIDE.md)** - Quick reference
-- **[Issue Resolution](ISSUE_RESOLUTION.md)** - Troubleshooting guide
+For detailed documentation, see:
+- **API Documentation**: http://localhost:8000/docs (Interactive API docs when server is running)
+- **Quick Start Guide**: See [Quick Start](#quick-start) section above
+- **Troubleshooting Guide**: See [Troubleshooting](#troubleshooting) section above
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Here's how to get started:
 
@@ -1039,30 +1037,30 @@ chore: Maintenance tasks
 
 ---
 
-## 📈 Roadmap
+## Roadmap
 
-### Phase 1: Core Features ✅
+### Phase 1: Core Features (Completed)
 - [x] Multi-agent architecture
 - [x] LangGraph orchestration
 - [x] Jira integration
 - [x] RAG-powered code retrieval
 - [x] Automatic retry logic
 
-### Phase 2: Enhanced Intelligence 🚧
+### Phase 2: Enhanced Intelligence (In Progress)
 - [ ] Multi-model support (Claude, Gemini)
 - [ ] Advanced code analysis
 - [ ] Automated testing execution
 - [ ] Performance optimization
 - [ ] Caching layer
 
-### Phase 3: Enterprise Features 📋
+### Phase 3: Enterprise Features (Planned)
 - [ ] Multi-repository support
 - [ ] Team collaboration features
 - [ ] Advanced security scanning
 - [ ] Compliance checking
 - [ ] Custom agent plugins
 
-### Phase 4: Integration & Scaling 🔮
+### Phase 4: Integration & Scaling (Future)
 - [ ] GitHub Actions integration
 - [ ] GitLab CI/CD integration
 - [ ] Slack notifications
@@ -1071,7 +1069,7 @@ chore: Maintenance tasks
 
 ---
 
-## 🏆 Acknowledgments
+## Acknowledgments
 
 Built with:
 - **[LangChain](https://github.com/langchain-ai/langchain)** - LLM framework
@@ -1083,30 +1081,24 @@ Built with:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📞 Support
+## Support
 
-- **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-org/Jira-Agentic-Development-System/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/Jira-Agentic-Development-System/discussions)
-
----
-
-## 🌟 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=your-org/Jira-Agentic-Development-System&type=Date)](https://star-history.com/#your-org/Jira-Agentic-Development-System&Date)
+- **Documentation**: See sections above
+- **Issues**: [GitHub Issues](https://github.com/amirtha-1412/Jira-Agentic-Development-System/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/amirtha-1412/Jira-Agentic-Development-System/discussions)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by the Jira Agentic Development Team**
+**Built by the Jira Agentic Development Team**
 
-[⬆ Back to Top](#-jira-agentic-development-system)
+[Back to Top](#jira-agentic-development-system)
 
 </div>
