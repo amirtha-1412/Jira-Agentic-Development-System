@@ -1,0 +1,119 @@
+# Docker Compose - Jira Agentic Development System
+version: '3.8'
+
+services:
+  # ─────────────────────────────────────────────
+  # Backend Service (FastAPI + AI Agents)
+  # ─────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: jira-agentic-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # LLM Configuration
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      
+      # Jira Configuration
+      - JIRA_BASE_URL=${JIRA_BASE_URL}
+      - JIRA_EMAIL=${JIRA_EMAIL}
+      - JIRA_API_KEY=${JIRA_API_KEY}
+      - JIRA_PROJECT_KEY=${JIRA_PROJECT_KEY}
+      
+      # GitHub Configuration
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_REPO_OWNER=${GITHUB_REPO_OWNER}
+      - GITHUB_REPO_NAME=${GITHUB_REPO_NAME}
+      
+      # Vector DB Configuration
+      - CHROMA_HOST=vectordb
+      - CHROMA_PORT=8001
+      
+      # Python Configuration
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount code for development (remove in production)
+      - ./backend:/app/backend
+      - ./agents:/app/agents
+      - ./workflows:/app/workflows
+      - ./vectorstore:/app/vectorstore
+      
+      # Persistent data
+      - backend-logs:/app/logs
+    depends_on:
+      vectordb:
+        condition: service_healthy
+    networks:
+      - jira-agentic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ─────────────────────────────────────────────
+  # Frontend Service (React + Vite)
+  # ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: jira-agentic-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - jira-agentic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ─────────────────────────────────────────────
+  # Vector Database (ChromaDB)
+  # ─────────────────────────────────────────────
+  vectordb:
+    image: chromadb/chroma:latest
+    container_name: jira-agentic-vectordb
+    ports:
+      - "8001:8000"
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    volumes:
+      - chroma-data:/chroma/chroma
+    networks:
+      - jira-agentic-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+# ─────────────────────────────────────────────
+# Networks
+# ─────────────────────────────────────────────
+networks:
+  jira-agentic-network:
+    driver: bridge
+    name: jira-agentic-network
+
+# ─────────────────────────────────────────────
+# Volumes
+# ─────────────────────────────────────────────
+volumes:
+  chroma-data:
+    name: jira-agentic-chroma-data
+  backend-logs:
+    name: jira-agentic-backend-logs

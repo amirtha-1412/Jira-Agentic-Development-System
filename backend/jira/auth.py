@@ -93,7 +93,7 @@ def test_jira_connection() -> dict:
                 "user":       data.get("displayName", "Unknown"),
                 "email":      data.get("emailAddress", ""),
                 "account_id": data.get("accountId", ""),
-                "message":    "✅ Jira authentication successful!",
+                "message":    "[OK] Jira authentication successful!",
             }
         else:
             return {
@@ -119,6 +119,6 @@ if __name__ == "__main__":
     print("Testing Jira connection...")
     result = test_jira_connection()
     if result["success"]:
-        print(f"✅ Connected as: {result['user']} ({result['email']})")
+        print(f"[OK] Connected as: {result['user']} ({result['email']})")
     else:
-        print(f"❌ Failed: {result['error']}")
+        print(f"[FAIL] Failed: {result['error']}")

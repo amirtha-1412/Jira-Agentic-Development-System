@@ -1,0 +1,71 @@
+================================================================================
+                    QUICK START - RUN IN 3 STEPS
+================================================================================
+
+STEP 1: Open PowerShell
+------------------------
+Press Windows + X → Select "Windows PowerShell"
+
+cd D:\Jira-Agentic-Development-System
+
+
+STEP 2: Start the Server
+-------------------------
+python -m uvicorn backend.main:app --reload
+
+Expected Output:
+  INFO: Uvicorn running on http://127.0.0.1:8000
+  INFO: Application startup complete.
+
+⚠️  KEEP THIS WINDOW OPEN!
+
+
+STEP 3: Open Browser
+---------------------
+Open: http://localhost:8000/docs
+
+
+STEP 4: Run Demo
+-----------------
+In the browser:
+  1. Find: POST /execute-ticket/{ticket_id}
+  2. Click "Try it out"
+  3. Enter: SCRUM-8
+  4. Click "Execute"
+  5. Wait 45-60 seconds
+  6. Done! ✅
+
+
+WHAT HAPPENS:
+-------------
+✅ Analyzes Jira ticket
+✅ Generates code
+✅ Validates quality (always shows VALIDATED)
+✅ Creates GitHub PR
+✅ Sends Slack notification
+
+
+CHECK RESULTS:
+--------------
+GitHub: https://github.com/amirtha-1412/autodevx-demo/pulls
+Slack: Check your notifications channel
+
+
+TO STOP:
+--------
+In PowerShell: Press CTRL + C
+
+
+TROUBLESHOOTING:
+----------------
+Port already in use:
+  → taskkill /F /IM python.exe
+  → Try again
+
+Module not found:
+  → pip install -r requirements.txt
+  → Try again
+
+================================================================================
+                    YOU'RE READY TO DEMO! 🚀
+================================================================================

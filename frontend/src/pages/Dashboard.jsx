@@ -170,46 +170,64 @@ export default function Dashboard() {
       // Stage 2 — Requirement Analysis
       addLog('Requirement Analyst Agent started...', 'agent')
       setStage('requirement_analysis', 'active'); setAgent('requirement_agent', 'running')
-      const analysisRaw = await tryApi(
-        () => analyzeTicket(ticket),
-        demoAnalysis,
-        'Requirement analysis'
-      )
-      const analysis = typeof analysisRaw === 'string' ? analysisRaw : (analysisRaw?.data?.analysis || demoAnalysis())
-      setResults(p => ({ ...p, requirement_analysis: analysis }))
+      let analysisText = demoAnalysis()
+      try {
+        if (isLive) {
+          const res = await analyzeTicket(ticket)
+          const d   = res.data
+          // Build readable summary from structured response
+          const reqs  = (d.functional_requirements || []).map(r => `- ${r}`).join('\n')
+          const steps = (d.implementation_steps    || []).map((s,i) => `${i+1}. ${s}`).join('\n')
+          const files = (d.affected_files          || []).map(f => `- ${f}`).join('\n')
+          analysisText = [
+            `## Summary\n${d.summary || ''}`,
+            `\n## Functional Requirements\n${reqs || '- (none)'}`,
+            `\n## Technical Requirements\n${(d.technical_requirements||[]).map(r=>`- ${r}`).join('\n') || '- (none)'}`,
+            `\n## Affected Files\n${files || '- (none)'}`,
+            `\n## Implementation Steps\n${steps || '1. (none)'}`,
+            `\n## Risk Level: ${d.risk_level || 'MEDIUM'}\n${d.risk_reason || ''}`,
+          ].join('\n')
+          addLog(`Requirement analysis received — risk: ${d.risk_level}`, 'success')
+        }
+      } catch (err) { addLog(`Analysis fallback: ${err.message}`, 'warn') }
+      setResults(p => ({ ...p, requirement_analysis: analysisText }))
       setAgent('requirement_agent', 'done'); setStage('requirement_analysis', 'completed')
       addLog('Requirement analysis complete.', 'success'); setProgress(28)
 
       // Stage 3 — Engineering Tasks
       addLog('Breaking ticket into engineering tasks...', 'agent')
       setStage('engineering_tasks', 'active')
-      const tasksRaw = await tryApi(
-        () => getEngineeringTasks(ticket),
-        demoTasks,
-        'Engineering tasks'
-      )
-      const tasks = typeof tasksRaw === 'string' ? tasksRaw : (tasksRaw?.data?.analysis || demoTasks())
-      setResults(p => ({ ...p, engineering_tasks: tasks }))
+      let tasksText = demoTasks()
+      try {
+        if (isLive) {
+          const res = await getEngineeringTasks(ticket)
+          tasksText = res.data?.analysis || demoTasks()
+          addLog('Engineering tasks received from backend.', 'success')
+        }
+      } catch (err) { addLog(`Tasks fallback: ${err.message}`, 'warn') }
+      setResults(p => ({ ...p, engineering_tasks: tasksText }))
       setStage('engineering_tasks', 'completed')
       addLog('Engineering tasks complete.', 'success'); setProgress(42)
 
-      // Stage 4 — Code Generation
+      // Stage 4 — Code Generation (placeholder with demo)
       addLog('Developer Agent generating implementation code...', 'agent')
       setStage('code_generation', 'active'); setAgent('developer_agent', 'running')
-      await sleep(isLive ? 400 : 1200)
+      await sleep(isLive ? 600 : 1200)
       setResults(p => ({ ...p, generated_code: demoCode() }))
       setAgent('developer_agent', 'done'); setStage('code_generation', 'completed')
       addLog('Code generation complete — 3 files modified.', 'success'); setProgress(58)
 
       // Stage 4b — Edge Cases
       addLog('Analyzing edge cases and security risks...', 'agent')
-      const edgeRaw = await tryApi(
-        () => getEdgeCases(ticket),
-        demoEdge,
-        'Edge cases'
-      )
-      const edge = typeof edgeRaw === 'string' ? edgeRaw : (edgeRaw?.data?.analysis || demoEdge())
-      setResults(p => ({ ...p, edge_cases: edge }))
+      let edgeText = demoEdge()
+      try {
+        if (isLive) {
+          const res = await getEdgeCases(ticket)
+          edgeText = res.data?.analysis || demoEdge()
+          addLog('Edge case analysis received from backend.', 'success')
+        }
+      } catch (err) { addLog(`Edge cases fallback: ${err.message}`, 'warn') }
+      setResults(p => ({ ...p, edge_cases: edgeText }))
       addLog('Edge case analysis complete.', 'success'); setProgress(68)
 
       // Stage 5 — QA
@@ -221,24 +239,31 @@ export default function Dashboard() {
       addLog('QA complete — 12/12 passed. Coverage: 94%.', 'success'); setProgress(82)
 
       // Stage 6 — Reasoning Trace + PR
-      addLog('Generating reasoning trace...', 'agent')
+      addLog('Generating explainable reasoning trace...', 'agent')
       setStage('pr_creation', 'active'); setAgent('pr_agent', 'running')
-      const traceRaw = await tryApi(
-        () => getReasoningTrace(ticket),
-        demoTrace,
-        'Reasoning trace'
-      )
-      const trace = Array.isArray(traceRaw) ? traceRaw
-        : traceRaw?.data?.reasoning ? traceRaw.data.reasoning.split('\n').filter(Boolean)
-        : demoTrace()
+      let traceLines = demoTrace()
+      try {
+        if (isLive) {
+          const res     = await getReasoningTrace(ticket)
+          const rawText = res.data?.reasoning || ''
+          // Split into numbered steps for display
+          const stepMatches = rawText.match(/Step \d+:.*?(?=Step \d+:|###|\n\n|$)/gs)
+          if (stepMatches && stepMatches.length > 0) {
+            traceLines = stepMatches.map(s => s.trim()).filter(Boolean)
+          } else if (rawText.length > 20) {
+            traceLines = rawText.split('\n').filter(l => l.trim().length > 10).slice(0, 7)
+          }
+          addLog('Reasoning trace received from backend.', 'success')
+        }
+      } catch (err) { addLog(`Reasoning fallback: ${err.message}`, 'warn') }
       if (isLive) { try { await executeTicket(ticket.ticket_id); addLog(`Pipeline confirmed on backend for ${ticket.ticket_id}.`, 'success') } catch (_) {} }
-      setResults(p => ({ ...p, reasoning_trace: trace }))
+      setResults(p => ({ ...p, reasoning_trace: traceLines }))
       setAgent('pr_agent', 'done'); setStage('pr_creation', 'completed')
       addLog('PR draft created. Reasoning trace ready.', 'success'); setProgress(95)
 
       // Complete
       await sleep(300); setStage('complete', 'completed'); setProgress(100); setIsComplete(true)
-      addLog('Pipeline completed successfully.', 'success')
+      addLog('✅ Pipeline completed successfully!', 'success')
     } catch (err) {
       setApiError(err.message); addLog(`Pipeline error: ${err.message}`, 'error')
     }
@@ -249,6 +274,8 @@ export default function Dashboard() {
   const doneCount    = Object.values(agentStatuses).filter(s => s === 'done').length
   const pipelineLabel = isComplete ? 'Complete' : isLoading ? 'Running' : 'Ready'
   const pipelineColor = isComplete ? '#10b981'  : isLoading ? '#f59e0b' : '#6366f1'
+
+
 
   return (
     <div className="min-h-screen" style={{ background: '#0f172a' }}>

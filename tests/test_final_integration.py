@@ -98,14 +98,14 @@ def test_valid_feature_request():
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     # Display summary
     status = get_workflow_status(final_state)
-    print(f"\n📊 Summary:")
+    print(f"\n[STATS] Summary:")
     print(f"   Pipeline Status: {status['pipeline_status']}")
     print(f"   Test Status: {status['test_status']}")
     print(f"   Retry Count: {status['retry_count']}")
@@ -113,9 +113,9 @@ def test_valid_feature_request():
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ TEST 1 PASSED")
+        print("  [OK] TEST 1 PASSED")
     else:
-        print("  ❌ TEST 1 FAILED")
+        print("  [FAIL] TEST 1 FAILED")
     print("=" * 70)
     
     return all_passed
@@ -190,21 +190,21 @@ def test_qa_failure_retry():
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
-    print(f"\n🔄 Retry Information:")
+    print(f"\n[RETRY] Retry Information:")
     print(f"   Total Retries: {retry_count}")
     print(f"   Final Test Status: {test_status}")
     print(f"   QA Notes: {final_state.get('qa_notes', 'N/A')[:100]}...")
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ TEST 2 PASSED")
+        print("  [OK] TEST 2 PASSED")
     else:
-        print("  ❌ TEST 2 FAILED")
+        print("  [FAIL] TEST 2 FAILED")
     print("=" * 70)
     
     return all_passed
@@ -255,7 +255,7 @@ def test_invalid_ticket_handling():
         
         crashed = False
     except Exception as e:
-        print(f"   ⚠️  Exception caught: {e}")
+        print(f"   [WARN]  Exception caught: {e}")
         crashed = True
         final_state = {}
     
@@ -273,21 +273,21 @@ def test_invalid_ticket_handling():
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     if final_state.get("errors"):
-        print(f"\n⚠️  Errors captured:")
+        print(f"\n[WARN]  Errors captured:")
         for err in final_state.get("errors", [])[:3]:
             print(f"   - {err}")
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ TEST 3 PASSED")
+        print("  [OK] TEST 3 PASSED")
     else:
-        print("  ❌ TEST 3 FAILED")
+        print("  [FAIL] TEST 3 FAILED")
     print("=" * 70)
     
     return all_passed
@@ -353,28 +353,28 @@ def test_explainable_logs():
         ("Contains DevNode logs", "[DevNode]" in logs),
         ("Contains QANode logs", "[QANode]" in logs),
         ("Contains PRNode logs", "[PRNode]" in logs),
-        ("Contains emoji indicators", any(emoji in logs for emoji in ["🔍", "💻", "🧪", "📝"])),
+        ("Contains emoji indicators", any(emoji in logs for emoji in ["[SEARCH]", "[CODE]", "[TEST]", "[PR]"])),
         ("Contains reason statements", "Reason:" in logs),
-        ("Contains completion markers", "✅" in logs),
+        ("Contains completion markers", "[OK]" in logs),
         ("Shows workflow stages", "Starting" in logs and "completed" in logs),
     ]
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     # Show log sample
-    print(f"\n📝 Log Sample (first 500 chars):")
+    print(f"\n[PR] Log Sample (first 500 chars):")
     print(f"   {logs[:500]}...")
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ TEST 4 PASSED")
+        print("  [OK] TEST 4 PASSED")
     else:
-        print("  ❌ TEST 4 FAILED")
+        print("  [FAIL] TEST 4 FAILED")
     print("=" * 70)
     
     return all_passed
@@ -404,7 +404,7 @@ def run_final_integration_tests():
             passed = test_func()
             results.append((test_name, passed))
         except Exception as e:
-            print(f"\n❌ Test '{test_name}' crashed: {e}")
+            print(f"\n[FAIL] Test '{test_name}' crashed: {e}")
             import traceback
             traceback.print_exc()
             results.append((test_name, False))
@@ -415,7 +415,7 @@ def run_final_integration_tests():
     print("=" * 70)
     
     for test_name, passed in results:
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[OK] PASS" if passed else "[FAIL] FAIL"
         print(f"  {status} | {test_name}")
     
     total = len(results)
@@ -426,10 +426,10 @@ def run_final_integration_tests():
     
     if passed_count == total:
         print("\n  🎉 ALL INTEGRATION TESTS PASSED!")
-        print("  ✅ Complete orchestration system validated")
-        print("  ✅ Ready for production deployment")
+        print("  [OK] Complete orchestration system validated")
+        print("  [OK] Ready for production deployment")
     else:
-        print(f"\n  ⚠️  {total - passed_count} test(s) failed")
+        print(f"\n  [WARN]  {total - passed_count} test(s) failed")
         print("  Review failures above for details")
     
     print("=" * 70 + "\n")

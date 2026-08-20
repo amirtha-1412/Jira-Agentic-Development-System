@@ -67,13 +67,13 @@ def test_real_agents_workflow():
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     # Display details
-    print(f"\n📊 Results:")
+    print(f"\n[STATS] Results:")
     print(f"   Pipeline Status: {status['pipeline_status']}")
     print(f"   Test Status: {status['test_status']}")
     print(f"   Retry Count: {status['retry_count']}")
@@ -88,16 +88,16 @@ def test_real_agents_workflow():
     
     # Show QA notes
     if final_state.get("qa_notes"):
-        print(f"\n🧪 QA Notes:")
+        print(f"\n[TEST] QA Notes:")
         qa_notes = final_state.get("qa_notes", "")
         for line in qa_notes.split("\n")[:10]:
             print(f"   {line}")
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ TEST PASSED - Real agents working!")
+        print("  [OK] TEST PASSED - Real agents working!")
     else:
-        print("  ⚠️  TEST PARTIAL - Some checks failed")
+        print("  [WARN]  TEST PARTIAL - Some checks failed")
     print("=" * 70)
     
     return all_passed

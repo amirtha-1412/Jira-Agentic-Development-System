@@ -10,9 +10,11 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 from backend.jira.jira_routes import router as jira_router
+from backend.gh_integration.github_routes import router as github_router
 from vectorstore.retrieval_routes import router as retrieval_router
 from agents.requirement_analyst.requirement_routes import router as analyst_router
 from workflows.workflow_routes import router as workflow_router
+from backend.auth.auth_routes import router as auth_router
 
 # Load environment variables
 load_dotenv()
@@ -29,17 +31,28 @@ app = FastAPI(
 # CORS Middleware — allow React frontend to connect
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+        "http://127.0.0.1:5175",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
+
 # ─────────────────────────────────────────────
 # Register Routers
 # ─────────────────────────────────────────────
+app.include_router(auth_router)  # Authentication routes (no protection)
 app.include_router(jira_router)
+app.include_router(github_router)
 app.include_router(retrieval_router)
 app.include_router(analyst_router)
 app.include_router(workflow_router)
@@ -51,7 +64,7 @@ app.include_router(workflow_router)
 @app.get("/", tags=["Health"])
 async def root():
     return {
-        "status": "✅ Jira Agentic Dev System is running",
+        "status": "[OK] Jira Agentic Dev System is running",
         "version": "1.0.0",
         "docs": "/docs",
     }

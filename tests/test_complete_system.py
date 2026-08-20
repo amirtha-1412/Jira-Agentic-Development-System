@@ -73,27 +73,27 @@ def test_complete_system():
     status = get_workflow_status(final_state)
     
     checks = [
-        ("✅ Requirement Analyst ran", "requirement" in final_state.get("completed_stages", [])),
-        ("✅ Developer Agent ran", "developer" in final_state.get("completed_stages", [])),
-        ("✅ QA Agent ran", "qa" in final_state.get("completed_stages", [])),
-        ("✅ PR Agent ran", "pr" in final_state.get("completed_stages", [])),
-        ("✅ Requirements extracted", len(final_state.get("functional_reqs", [])) > 0),
-        ("✅ Code generated", len(final_state.get("generated_code", {})) > 0),
-        ("✅ Tests created", len(final_state.get("test_cases", [])) > 0),
-        ("✅ PR generated", bool(final_state.get("pr_title"))),
-        ("✅ PR labels added", len(final_state.get("pr_labels", [])) > 0),
-        ("✅ Reviewers suggested", len(final_state.get("reviewers_suggested", [])) > 0),
+        ("[OK] Requirement Analyst ran", "requirement" in final_state.get("completed_stages", [])),
+        ("[OK] Developer Agent ran", "developer" in final_state.get("completed_stages", [])),
+        ("[OK] QA Agent ran", "qa" in final_state.get("completed_stages", [])),
+        ("[OK] PR Agent ran", "pr" in final_state.get("completed_stages", [])),
+        ("[OK] Requirements extracted", len(final_state.get("functional_reqs", [])) > 0),
+        ("[OK] Code generated", len(final_state.get("generated_code", {})) > 0),
+        ("[OK] Tests created", len(final_state.get("test_cases", [])) > 0),
+        ("[OK] PR generated", bool(final_state.get("pr_title"))),
+        ("[OK] PR labels added", len(final_state.get("pr_labels", [])) > 0),
+        ("[OK] Reviewers suggested", len(final_state.get("reviewers_suggested", [])) > 0),
     ]
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     # Display comprehensive results
-    print(f"\n📊 Complete Results:")
+    print(f"\n[STATS] Complete Results:")
     print(f"   Pipeline Status: {status['pipeline_status']}")
     print(f"   Current Stage: {status['current_stage']}")
     print(f"   Test Status: {status['test_status']}")
@@ -106,14 +106,14 @@ def test_complete_system():
     print(f"   Implementation Steps: {len(final_state.get('implementation_steps', []))}")
     print(f"   Risk Level: {final_state.get('risk_level', 'N/A')}")
     
-    print(f"\n💻 Developer Output:")
+    print(f"\n[CODE] Developer Output:")
     print(f"   Files Generated: {len(final_state.get('generated_code', {}))}")
     if final_state.get("generated_code"):
         print(f"   Generated Files:")
         for filename in list(final_state.get("generated_code", {}).keys())[:5]:
             print(f"     - {filename}")
     
-    print(f"\n🧪 QA Results:")
+    print(f"\n[TEST] QA Results:")
     print(f"   Test Cases: {len(final_state.get('test_cases', []))}")
     print(f"   Test Status: {final_state.get('test_status', 'N/A')}")
     if final_state.get("qa_notes"):
@@ -122,7 +122,7 @@ def test_complete_system():
             if line.strip():
                 print(f"     {line}")
     
-    print(f"\n📝 PR Details:")
+    print(f"\n[PR] PR Details:")
     print(f"   Title: {final_state.get('pr_title', 'N/A')}")
     print(f"   Labels: {', '.join(final_state.get('pr_labels', []))}")
     print(f"   Reviewers: {', '.join(final_state.get('reviewers_suggested', []))}")
@@ -143,7 +143,7 @@ def test_complete_system():
     if all_passed:
         print("  🎉 ALL AGENTS WORKING - COMPLETE SYSTEM TEST PASSED!")
     else:
-        print("  ⚠️  SOME CHECKS FAILED - REVIEW ABOVE")
+        print("  [WARN]  SOME CHECKS FAILED - REVIEW ABOVE")
     print("=" * 70)
     
     return all_passed
@@ -155,8 +155,8 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("  FINAL SUMMARY")
     print("=" * 70)
-    print(f"  Status: {'✅ SUCCESS' if success else '❌ FAILED'}")
-    print(f"  All Agents: {'✅ Working' if success else '⚠️  Issues detected'}")
+    print(f"  Status: {'[OK] SUCCESS' if success else '[FAIL] FAILED'}")
+    print(f"  All Agents: {'[OK] Working' if success else '[WARN]  Issues detected'}")
     print("=" * 70 + "\n")
     
     sys.exit(0 if success else 1)

@@ -144,7 +144,7 @@ async def execute_workflow_endpoint(
     except Exception as e:
         # Log full traceback for debugging
         error_trace = traceback.format_exc()
-        print(f"\n❌ Workflow execution failed for {ticket_id}:")
+        print(f"\n[ERROR] Workflow execution failed for {ticket_id}:")
         print(error_trace)
         
         raise HTTPException(
@@ -350,9 +350,9 @@ async def workflow_health():
             "success": True,
             "status": "healthy" if all_healthy else "degraded",
             "components": {
-                "langgraph": "✅ healthy" if graph_healthy else "❌ unhealthy",
-                "llm": "✅ healthy" if llm_healthy else "❌ unhealthy",
-                "retriever": "✅ ready" if retriever_healthy else "⚠️  not ready (optional)",
+                "langgraph": "[OK] healthy" if graph_healthy else "[FAIL] unhealthy",
+                "llm": "[OK] healthy" if llm_healthy else "[FAIL] unhealthy",
+                "retriever": "[OK] ready" if retriever_healthy else "[WARN] not ready (optional)",
             },
             "nodes": [
                 "requirement_node",

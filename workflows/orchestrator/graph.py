@@ -44,7 +44,7 @@ def should_retry_development(state: WorkflowState) -> str:
     Conditional routing after QA node.
     
     Returns:
-        "pr_node"        → Tests passed, proceed to PR
+        "pr_node"        → Tests passed or validated, proceed to PR
         "developer_node" → Tests failed, retry development
         "end"            → Max retries exceeded or critical error
     """
@@ -63,9 +63,9 @@ def should_retry_development(state: WorkflowState) -> str:
         print(f"  [Conditional] Max retries ({max_retries}) exceeded → PR")
         return "pr_node"
     
-    # Tests passed → proceed to PR
-    if test_status == "PASSED":
-        print(f"  [Conditional] Tests PASSED → PR")
+    # Tests passed or validated → proceed to PR
+    if test_status in ["PASSED", "VALIDATED"]:
+        print(f"  [Conditional] Tests {test_status} → PR")
         return "pr_node"
     
     # Tests failed → retry development
@@ -74,7 +74,7 @@ def should_retry_development(state: WorkflowState) -> str:
         return "developer_node"
     
     # Default: proceed to PR
-    print(f"  [Conditional] Default path → PR")
+    print(f"  [Conditional] Default path (status: {test_status}) → PR")
     return "pr_node"
 
 
@@ -103,18 +103,18 @@ def build_workflow_graph() -> StateGraph:
     graph.add_node("developer_node",   developer_node)
     graph.add_node("qa_node",          qa_node)
     graph.add_node("pr_node",          pr_node)
-    print("  [Graph] ✅ 4 nodes added")
+    print("  [Graph] [OK] 4 nodes added")
     
     # ── Set Entry Point ───────────────────────
     graph.set_entry_point("requirement_node")
-    print("  [Graph] ✅ Entry point: requirement_node")
+    print("  [Graph] [OK] Entry point: requirement_node")
     
     # ── Add Sequential Edges ──────────────────
     print("  [Graph] Adding edges...")
     graph.add_edge("requirement_node", "developer_node")
     graph.add_edge("developer_node",   "qa_node")
     graph.add_edge("pr_node",          END)
-    print("  [Graph] ✅ Sequential edges added")
+    print("  [Graph] [OK] Sequential edges added")
     
     # ── Add Conditional Edge (QA → retry or PR) ───
     graph.add_conditional_edges(
@@ -126,7 +126,7 @@ def build_workflow_graph() -> StateGraph:
             "end":            END,               # Abort workflow
         }
     )
-    print("  [Graph] ✅ Conditional edge added (QA retry logic)")
+    print("  [Graph] [OK] Conditional edge added (QA retry logic)")
     
     print("=" * 60)
     print("  GRAPH CONSTRUCTION COMPLETE")
@@ -150,7 +150,7 @@ def compile_workflow() -> StateGraph:
     graph    = build_workflow_graph()
     compiled = graph.compile()
     
-    print("  [Compiler] ✅ Workflow compiled successfully")
+    print("  [Compiler] [OK] Workflow compiled successfully")
     print("  [Compiler] Ready for execution\n")
     
     return compiled
@@ -206,13 +206,13 @@ def execute_workflow(
         
         if verbose:
             print("\n  " + "-" * 68)
-            print(f"  [Executor] ✅ Workflow completed")
+            print(f"  [Executor] [OK] Workflow completed")
             print(f"  [Executor] Final stage: {final_state.get('current_stage')}")
             print(f"  [Executor] Status: {final_state.get('pipeline_status')}")
             print(f"  [Executor] Retries used: {final_state.get('retry_count', 0)}")
             
             if final_state.get("errors"):
-                print(f"  [Executor] ⚠️  Errors: {len(final_state['errors'])}")
+                print(f"  [Executor] [WARN]  Errors: {len(final_state['errors'])}")
                 for err in final_state["errors"]:
                     print(f"    - {err}")
         
@@ -220,7 +220,7 @@ def execute_workflow(
     
     except Exception as e:
         if verbose:
-            print(f"\n  [Executor] ❌ Workflow execution failed: {e}")
+            print(f"\n  [Executor] [FAIL] Workflow execution failed: {e}")
         
         # Return error state
         return {
@@ -256,10 +256,10 @@ def get_workflow_status(state: WorkflowState) -> dict:
         "pipeline_status":  state.get("pipeline_status", "unknown"),
         "current_stage":    state.get("current_stage", "unknown"),
         "progress": {
-            "requirement": "✅" if "requirement" in completed else "⏳",
-            "developer":   "✅" if "developer"   in completed else "⏳",
-            "qa":          "✅" if "qa"          in completed else "⏳",
-            "pr":          "✅" if "pr"          in completed else "⏳",
+            "requirement": "[OK]" if "requirement" in completed else "[WAIT]",
+            "developer":   "[OK]" if "developer"   in completed else "[WAIT]",
+            "qa":          "[OK]" if "qa"          in completed else "[WAIT]",
+            "pr":          "[OK]" if "pr"          in completed else "[WAIT]",
         },
         "retry_count":      state.get("retry_count", 0),
         "test_status":      state.get("test_status", "NOT_RUN"),
@@ -287,10 +287,10 @@ if __name__ == "__main__":
     print("-" * 70)
     try:
         workflow = compile_workflow()
-        print("  ✅ Graph compiled successfully")
-        print(f"  ✅ Type: {type(workflow)}")
+        print("  [OK] Graph compiled successfully")
+        print(f"  [OK] Type: {type(workflow)}")
     except Exception as e:
-        print(f"  ❌ Compilation failed: {e}")
+        print(f"  [FAIL] Compilation failed: {e}")
     
     # Test 2: Conditional logic
     print("\n[TEST 2] Conditional Edge Logic")

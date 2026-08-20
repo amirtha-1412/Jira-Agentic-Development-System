@@ -54,16 +54,16 @@ def test_environment_config():
                 display_value = var_value[:10] + "..." if len(var_value) > 10 else "***"
             else:
                 display_value = var_value
-            print(f"   ✅ {var_name}: {display_value}")
+            print(f"   [OK] {var_name}: {display_value}")
         else:
-            print(f"   ❌ {var_name}: NOT SET")
+            print(f"   [FAIL] {var_name}: NOT SET")
             all_present = False
     
     if all_present:
-        print("\n   ✅ All environment variables configured!")
+        print("\n   [OK] All environment variables configured!")
         return True
     else:
-        print("\n   ❌ Missing required environment variables!")
+        print("\n   [FAIL] Missing required environment variables!")
         return False
 
 
@@ -75,17 +75,17 @@ def test_jira_connection():
         from backend.jira.connector import JiraConnector
         
         connector = JiraConnector()
-        print(f"   ✅ JiraConnector initialized")
+        print(f"   [OK] JiraConnector initialized")
         print(f"   📍 Base URL: {connector.base_url}")
         print(f"   📁 Project: {connector.project}")
         
         # Test connection by fetching open tickets
-        print("\n   🔍 Fetching open tickets from your Jira...")
+        print("\n   [SEARCH] Fetching open tickets from your Jira...")
         result = connector.get_open_tickets(max_results=10)
         
         if result.get("success"):
-            print(f"   ✅ Connection successful!")
-            print(f"   📊 Total open tickets: {result.get('total', 0)}")
+            print(f"   [OK] Connection successful!")
+            print(f"   [STATS] Total open tickets: {result.get('total', 0)}")
             
             tickets = result.get("tickets", [])
             if tickets:
@@ -96,15 +96,15 @@ def test_jira_connection():
                 
                 return True, tickets
             else:
-                print(f"   ⚠️  No open tickets found in project {connector.project}")
-                print(f"   💡 Create a ticket in Jira to test the workflow")
+                print(f"   [WARN]  No open tickets found in project {connector.project}")
+                print(f"   [IDEA] Create a ticket in Jira to test the workflow")
                 return True, []
         else:
-            print(f"   ❌ Connection failed: {result.get('error')}")
+            print(f"   [FAIL] Connection failed: {result.get('error')}")
             return False, []
             
     except Exception as e:
-        print(f"   ❌ Error: {str(e)}")
+        print(f"   [FAIL] Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return False, []
@@ -118,12 +118,12 @@ def test_fetch_specific_ticket(ticket_id):
         from backend.jira.connector import JiraConnector
         
         connector = JiraConnector()
-        print(f"   🔍 Fetching ticket {ticket_id}...")
+        print(f"   [SEARCH] Fetching ticket {ticket_id}...")
         
         result = connector.get_ticket(ticket_id)
         
         if result.get("success"):
-            print(f"   ✅ Ticket fetched successfully!")
+            print(f"   [OK] Ticket fetched successfully!")
             print(f"\n   📋 Ticket Details:")
             print(f"      ID: {result.get('ticket_id')}")
             print(f"      Summary: {result.get('summary')}")
@@ -135,18 +135,18 @@ def test_fetch_specific_ticket(ticket_id):
             
             description = result.get('description', '')
             if description:
-                print(f"\n   📝 Description:")
+                print(f"\n   [PR] Description:")
                 desc_preview = description[:300] + "..." if len(description) > 300 else description
                 for line in desc_preview.split('\n'):
                     print(f"      {line}")
             
             return True, result
         else:
-            print(f"   ❌ Failed to fetch ticket: {result.get('error')}")
+            print(f"   [FAIL] Failed to fetch ticket: {result.get('error')}")
             return False, None
             
     except Exception as e:
-        print(f"   ❌ Error: {str(e)}")
+        print(f"   [FAIL] Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return False, None
@@ -159,16 +159,16 @@ def test_requirement_analyst(ticket_data):
     try:
         from agents.requirement_analyst.analyzer import RequirementAnalyst
         
-        print(f"   🤖 Initializing Requirement Analyst...")
+        print(f"   [BOT] Initializing Requirement Analyst...")
         analyst = RequirementAnalyst()
         
-        print(f"   📊 Analyzing ticket: {ticket_data.get('ticket_id')}")
-        print(f"   ⏳ This may take 30-60 seconds...")
+        print(f"   [STATS] Analyzing ticket: {ticket_data.get('ticket_id')}")
+        print(f"   [WAIT] This may take 30-60 seconds...")
         
         analysis = analyst.analyze(ticket_data)
         
         if analysis:
-            print(f"   ✅ Analysis completed!")
+            print(f"   [OK] Analysis completed!")
             print(f"\n   📋 Analysis Results:")
             print(f"      Functional Requirements: {len(analysis.get('functional_requirements', []))}")
             print(f"      Technical Requirements: {len(analysis.get('technical_requirements', []))}")
@@ -185,11 +185,11 @@ def test_requirement_analyst(ticket_data):
             
             return True, analysis
         else:
-            print(f"   ❌ Analysis failed or returned empty")
+            print(f"   [FAIL] Analysis failed or returned empty")
             return False, None
             
     except Exception as e:
-        print(f"   ❌ Error: {str(e)}")
+        print(f"   [FAIL] Error: {str(e)}")
         import traceback
         traceback.print_exc()
         return False, None
@@ -202,8 +202,8 @@ def test_complete_workflow(ticket_id):
     try:
         from workflows.orchestrator.graph import execute_workflow, get_workflow_status
         
-        print(f"   🚀 Starting complete workflow for {ticket_id}")
-        print(f"   ⏳ This will take several minutes...")
+        print(f"   [RUN] Starting complete workflow for {ticket_id}")
+        print(f"   [WAIT] This will take several minutes...")
         print(f"\n   Expected Flow:")
         print(f"      1. Requirement Analyst → Analyzes ticket")
         print(f"      2. Developer Agent → Generates code")
@@ -222,9 +222,9 @@ def test_complete_workflow(ticket_id):
         status = get_workflow_status(final_state)
         
         print(f"\n   " + "-" * 66)
-        print(f"   ✅ Workflow completed!")
+        print(f"   [OK] Workflow completed!")
         
-        print(f"\n   📊 Workflow Results:")
+        print(f"\n   [STATS] Workflow Results:")
         print(f"      Pipeline Status: {status.get('pipeline_status')}")
         print(f"      Current Stage: {status.get('current_stage')}")
         print(f"      Test Status: {status.get('test_status')}")
@@ -233,21 +233,21 @@ def test_complete_workflow(ticket_id):
         
         print(f"\n   📋 Completed Stages:")
         for stage in final_state.get('completed_stages', []):
-            print(f"      ✅ {stage}")
+            print(f"      [OK] {stage}")
         
-        print(f"\n   💻 Generated Code:")
+        print(f"\n   [CODE] Generated Code:")
         code_files = final_state.get('generated_code', {})
         print(f"      Files: {len(code_files)}")
         if code_files:
             for filename in list(code_files.keys())[:5]:
                 print(f"         - {filename}")
         
-        print(f"\n   🧪 Test Results:")
+        print(f"\n   [TEST] Test Results:")
         test_cases = final_state.get('test_cases', [])
         print(f"      Test Cases: {len(test_cases)}")
         print(f"      Status: {final_state.get('test_status', 'N/A')}")
         
-        print(f"\n   📝 PR Information:")
+        print(f"\n   [PR] PR Information:")
         print(f"      Title: {final_state.get('pr_title', 'N/A')}")
         print(f"      Labels: {', '.join(final_state.get('pr_labels', []))}")
         print(f"      Reviewers: {', '.join(final_state.get('reviewers_suggested', []))}")
@@ -262,7 +262,7 @@ def test_complete_workflow(ticket_id):
         return success, final_state
         
     except Exception as e:
-        print(f"   ❌ Workflow failed: {str(e)}")
+        print(f"   [FAIL] Workflow failed: {str(e)}")
         import traceback
         traceback.print_exc()
         return False, None
@@ -280,19 +280,19 @@ def main():
     # Test 1: Environment Configuration
     results['env_config'] = test_environment_config()
     if not results['env_config']:
-        print("\n❌ Environment configuration failed. Please check your .env file.")
+        print("\n[FAIL] Environment configuration failed. Please check your .env file.")
         return False
     
     # Test 2: Jira Connection
     results['jira_connection'], tickets = test_jira_connection()
     if not results['jira_connection']:
-        print("\n❌ Jira connection failed. Please check your credentials.")
+        print("\n[FAIL] Jira connection failed. Please check your credentials.")
         return False
     
     # If no tickets, suggest creating one
     if not tickets:
         print("\n" + "=" * 70)
-        print("  ⚠️  NO OPEN TICKETS FOUND")
+        print("  [WARN]  NO OPEN TICKETS FOUND")
         print("=" * 70)
         print("  Please create a ticket in your Jira project to test the workflow.")
         print(f"  Project: {os.getenv('JIRA_PROJECT_KEY')}")
@@ -305,7 +305,7 @@ def main():
     # Test 3: Fetch Specific Ticket
     results['fetch_ticket'], ticket_data = test_fetch_specific_ticket(test_ticket_id)
     if not results['fetch_ticket']:
-        print(f"\n❌ Failed to fetch ticket {test_ticket_id}")
+        print(f"\n[FAIL] Failed to fetch ticket {test_ticket_id}")
         return False
     
     # Test 4: Requirement Analyst
@@ -317,7 +317,7 @@ def main():
     print("=" * 70)
     print(f"  Ticket: {test_ticket_id}")
     print(f"  Summary: {ticket_data.get('summary')}")
-    print(f"\n  ⚠️  This will take several minutes and use LLM API credits.")
+    print(f"\n  [WARN]  This will take several minutes and use LLM API credits.")
     print(f"  The workflow will:")
     print(f"     1. Analyze requirements")
     print(f"     2. Generate code")
@@ -348,9 +348,9 @@ def main():
     
     for test_name, result in test_results:
         if result is True:
-            print(f"   ✅ {test_name}")
+            print(f"   [OK] {test_name}")
         elif result is False:
-            print(f"   ❌ {test_name}")
+            print(f"   [FAIL] {test_name}")
         else:
             print(f"   ⏭️  {test_name} (skipped)")
     
@@ -361,7 +361,7 @@ def main():
         print("  🎉 ALL TESTS PASSED!")
         print("  Your Jira integration is working correctly!")
     else:
-        print("  ⚠️  SOME TESTS FAILED")
+        print("  [WARN]  SOME TESTS FAILED")
         print("  Please review the errors above.")
     print("=" * 70 + "\n")
     
@@ -373,10 +373,10 @@ if __name__ == "__main__":
         success = main()
         sys.exit(0 if success else 1)
     except KeyboardInterrupt:
-        print("\n\n⚠️  Test interrupted by user.")
+        print("\n\n[WARN]  Test interrupted by user.")
         sys.exit(1)
     except Exception as e:
-        print(f"\n\n❌ Unexpected error: {str(e)}")
+        print(f"\n\n[FAIL] Unexpected error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

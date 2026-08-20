@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env.local
+.env.development
+.env.test
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Vector DB data (will use volume)
+vectorstore/chroma_db/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore

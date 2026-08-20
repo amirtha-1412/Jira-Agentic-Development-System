@@ -11,8 +11,26 @@ Model: all-MiniLM-L6-v2
   - Great for code + natural language
 """
 
+import os
+import warnings
+
+# Suppress warnings BEFORE any other imports
+warnings.filterwarnings('ignore', message='.*position_ids.*')
+warnings.filterwarnings('ignore', message='.*unauthenticated.*')
+warnings.filterwarnings('ignore', category=FutureWarning)
+
+from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from vectorstore.chunker import CodeChunk
+
+# Load environment variables
+load_dotenv()
+
+# Set HF token before loading models
+hf_token = os.getenv("HF_TOKEN", "").strip()
+if hf_token:
+    os.environ["HF_TOKEN"] = hf_token
+    os.environ["HUGGING_FACE_HUB_TOKEN"] = hf_token
 
 # ─── Model config ────────────────────────────
 DEFAULT_MODEL  = "all-MiniLM-L6-v2"
@@ -29,9 +47,12 @@ def load_model(model_name: str = DEFAULT_MODEL) -> SentenceTransformer:
     """
     Loads and caches a SentenceTransformer model.
     Returns the cached model on subsequent calls.
+    Configures HuggingFace token if available.
     """
     if model_name not in _model_cache:
         print(f"  [Embedder] Loading model: {model_name} ...")
+        
+        # Load model (warnings already suppressed at module level)
         _model_cache[model_name] = SentenceTransformer(model_name)
         print(f"  [Embedder] Model loaded. Dim={EMBEDDING_DIM}")
     return _model_cache[model_name]

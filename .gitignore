@@ -8,7 +8,6 @@ __pycache__/
 dist/
 build/
 .pytest_cache/
-.md
 # ─── Environment & Secrets ──────────────────
 .env
 *.env.local
@@ -21,8 +20,13 @@ dist/
 # ─── Vector Store ───────────────────────────
 vectorstore/chroma_db/
 
+# ─── Agent Memory ───────────────────────────
+.agent_memory/
+.test_memory*/
+
 # ─── IDE & OS ───────────────────────────────
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
+.md

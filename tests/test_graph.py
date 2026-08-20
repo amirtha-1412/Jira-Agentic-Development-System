@@ -38,15 +38,15 @@ def test_graph_compilation():
     
     try:
         graph = build_workflow_graph()
-        print("  ✅ Graph built successfully")
+        print("  [OK] Graph built successfully")
         
         compiled = compile_workflow()
-        print("  ✅ Graph compiled successfully")
-        print(f"  ✅ Type: {type(compiled)}")
+        print("  [OK] Graph compiled successfully")
+        print(f"  [OK] Type: {type(compiled)}")
         
         return True
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"  [FAIL] FAILED: {e}")
         return False
 
 
@@ -67,19 +67,19 @@ def test_node_connectivity():
         expected_nodes = ["requirement_node", "developer_node", "qa_node", "pr_node"]
         
         print(f"  [Check] Expected nodes: {expected_nodes}")
-        print("  ✅ All nodes registered")
+        print("  [OK] All nodes registered")
         
         # Check entry point
-        print("  ✅ Entry point set: requirement_node")
+        print("  [OK] Entry point set: requirement_node")
         
         # Check edges exist
-        print("  ✅ Sequential edges: requirement → developer → qa")
-        print("  ✅ Conditional edge: qa → [retry/pr/end]")
-        print("  ✅ Terminal edge: pr → END")
+        print("  [OK] Sequential edges: requirement → developer → qa")
+        print("  [OK] Conditional edge: qa → [retry/pr/end]")
+        print("  [OK] Terminal edge: pr → END")
         
         return True
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"  [FAIL] FAILED: {e}")
         return False
 
 
@@ -125,7 +125,7 @@ def test_conditional_logic():
     for i, tc in enumerate(test_cases, 1):
         result = should_retry_development(tc["state"])
         passed = result == tc["expected"]
-        status = "✅" if passed else "❌"
+        status = "[OK]" if passed else "[FAIL]"
         
         print(f"  {status} Test {i}: {tc['name']}")
         print(f"      Expected: {tc['expected']}, Got: {result}")
@@ -134,9 +134,9 @@ def test_conditional_logic():
             all_passed = False
     
     if all_passed:
-        print("\n  ✅ All conditional logic tests passed")
+        print("\n  [OK] All conditional logic tests passed")
     else:
-        print("\n  ❌ Some conditional logic tests failed")
+        print("\n  [FAIL] Some conditional logic tests failed")
     
     return all_passed
 
@@ -154,7 +154,7 @@ def test_state_transitions():
     try:
         # Create initial state
         state = create_initial_state("TEST-1", {"title": "Test ticket"})
-        print(f"  ✅ Initial state created")
+        print(f"  [OK] Initial state created")
         print(f"      Ticket ID: {state['ticket_id']}")
         print(f"      Stage: {state['current_stage']}")
         print(f"      Status: {state['pipeline_status']}")
@@ -162,22 +162,22 @@ def test_state_transitions():
         # Simulate state updates
         state["current_stage"] = "requirement"
         state["completed_stages"] = ["requirement"]
-        print(f"  ✅ State updated: requirement stage completed")
+        print(f"  [OK] State updated: requirement stage completed")
         
         state["current_stage"] = "developer"
         state["completed_stages"].append("developer")
-        print(f"  ✅ State updated: developer stage completed")
+        print(f"  [OK] State updated: developer stage completed")
         
         state["current_stage"] = "qa"
         state["test_status"] = "PASSED"
         state["completed_stages"].append("qa")
-        print(f"  ✅ State updated: qa stage completed")
+        print(f"  [OK] State updated: qa stage completed")
         
         state["current_stage"] = "pr"
         state["pr_ready"] = True
         state["completed_stages"].append("pr")
         state["pipeline_status"] = "completed"
-        print(f"  ✅ State updated: pr stage completed")
+        print(f"  [OK] State updated: pr stage completed")
         
         print(f"\n  Final state:")
         print(f"      Completed stages: {state['completed_stages']}")
@@ -185,7 +185,7 @@ def test_state_transitions():
         
         return True
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"  [FAIL] FAILED: {e}")
         return False
 
 
@@ -238,7 +238,7 @@ def test_workflow_execution():
         
         all_passed = True
         for check_name, passed in checks:
-            status = "✅" if passed else "❌"
+            status = "[OK]" if passed else "[FAIL]"
             print(f"  {status} {check_name}")
             if not passed:
                 all_passed = False
@@ -254,14 +254,14 @@ def test_workflow_execution():
         print(f"      Errors: {status['errors']}")
         
         if all_passed:
-            print("\n  ✅ Workflow execution test PASSED")
+            print("\n  [OK] Workflow execution test PASSED")
         else:
-            print("\n  ⚠️  Workflow execution test PARTIAL (some checks failed)")
+            print("\n  [WARN]  Workflow execution test PARTIAL (some checks failed)")
         
         return all_passed
     
     except Exception as e:
-        print(f"  ❌ FAILED: {e}")
+        print(f"  [FAIL] FAILED: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -291,7 +291,7 @@ def run_all_tests():
             passed = test_func()
             results.append((test_name, passed))
         except Exception as e:
-            print(f"\n  ❌ Test '{test_name}' crashed: {e}")
+            print(f"\n  [FAIL] Test '{test_name}' crashed: {e}")
             results.append((test_name, False))
     
     # Summary
@@ -300,7 +300,7 @@ def run_all_tests():
     print("=" * 70)
     
     for test_name, passed in results:
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[OK] PASS" if passed else "[FAIL] FAIL"
         print(f"  {status} | {test_name}")
     
     total = len(results)

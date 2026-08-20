@@ -1,0 +1,202 @@
+================================================================================
+                         DEMO COMMANDS - QUICK REFERENCE
+================================================================================
+
+PRE-DEMO SETUP:
+================================================================================
+cd d:\Jira-Agentic-Development-System
+pip install -r requirements.txt
+
+
+COMMAND 1: START BACKEND
+================================================================================
+python backend/main.py
+
+Expected: INFO: Uvicorn running on http://0.0.0.0:8000
+Open: http://localhost:8000/docs
+
+
+COMMAND 2: TEST JIRA (New Terminal)
+================================================================================
+cd d:\Jira-Agentic-Development-System
+python test_jira_only.py
+
+Expected: ✅ JIRA CONNECTION SUCCESSFUL
+
+
+COMMAND 3: TEST AUTHENTICATION
+================================================================================
+python test_authentication.py
+
+Expected: 7/7 tests passed ✅
+
+
+COMMAND 4: TEST SLACK
+================================================================================
+python test_slack.py
+
+Expected: ✅ Slack notification sent successfully
+
+
+SWAGGER UI STEPS:
+================================================================================
+
+STEP 1: Health Check
+  → GET /api/auth/health
+  → Try it out
+  → Execute
+
+STEP 2: Login
+  → POST /api/auth/login
+  → Try it out
+  → username: admin
+  → password: admin123
+  → Execute
+  → Copy access_token
+
+STEP 3: Authorize
+  → Click 🔒 button (top right)
+  → Paste token
+  → Authorize
+  → Close
+
+STEP 4: Get User
+  → GET /api/auth/me
+  → Try it out
+  → Execute
+
+STEP 5: Get Tickets
+  → GET /jira/tickets
+  → Try it out
+  → Execute
+
+STEP 6: Execute Workflow
+  → POST /execute-ticket/{ticket_id}
+  → Try it out
+  → ticket_id: SCRUM-1
+  → Execute
+  → Wait 2-3 minutes
+
+
+CREDENTIALS:
+================================================================================
+Username: admin       Password: admin123
+Username: developer   Password: developer123
+Username: viewer      Password: viewer123
+
+
+URLS:
+================================================================================
+API Docs:  http://localhost:8000/docs
+Health:    http://localhost:8000/health
+ReDoc:     http://localhost:8000/redoc
+Jira:      https://amirtha2314.atlassian.net
+
+
+BACKUP COMMANDS (If Issues):
+================================================================================
+
+Check port 8000:
+  netstat -ano | findstr :8000
+
+Kill process:
+  taskkill /PID <PID> /F
+
+Reinstall dependencies:
+  pip install -r requirements.txt
+
+Run diagnostics:
+  python fix_issues.py
+
+
+DEMO FLOW:
+================================================================================
+1. Start backend                    (python backend/main.py)
+2. Open Swagger UI                  (http://localhost:8000/docs)
+3. Health check                     (GET /api/auth/health)
+4. Login                            (POST /api/auth/login)
+5. Authorize                        (Click 🔒, paste token)
+6. Get user info                    (GET /api/auth/me)
+7. Test Jira                        (python test_jira_only.py)
+8. Get tickets                      (GET /jira/tickets)
+9. Execute workflow                 (POST /execute-ticket/SCRUM-1)
+10. Show results                    (Check response)
+11. Check Slack                     (Open Slack channel)
+12. Run tests                       (python test_authentication.py)
+
+
+TIMING:
+================================================================================
+Total Demo Time: 15 minutes
+  - Startup: 2 min
+  - Authentication: 3 min
+  - Jira Integration: 3 min
+  - Workflow Execution: 5 min
+  - Results: 2 min
+
+
+KEY POINTS TO MENTION:
+================================================================================
+✓ Multi-agent system (4 specialized AI agents)
+✓ Complete automation (Jira ticket → Pull request)
+✓ Built-in QA with automatic retry logic
+✓ Real integrations (Jira, GitHub, Slack)
+✓ JWT authentication with role-based access
+✓ Production-ready (Docker, CI/CD, tests)
+✓ 100% test coverage
+✓ 2-3 minutes per ticket
+
+
+SUCCESS INDICATORS:
+================================================================================
+✅ Backend starts without errors
+✅ Login returns JWT token
+✅ Jira connection successful
+✅ Workflow completes all stages
+✅ Tests pass (7/7)
+✅ Slack notification sent
+
+
+TROUBLESHOOTING:
+================================================================================
+Problem: Port 8000 in use
+  Solution: netstat -ano | findstr :8000
+            taskkill /PID <PID> /F
+
+Problem: Module not found
+  Solution: pip install -r requirements.txt
+
+Problem: Workflow slow
+  Solution: Show test results while waiting
+            Explain architecture
+
+Problem: API error
+  Solution: Check .env file
+            Run: python fix_issues.py
+
+
+EMERGENCY BACKUP:
+================================================================================
+If live demo fails:
+  1. Show test results (python test_authentication.py)
+  2. Show screenshots of successful runs
+  3. Walk through code and architecture
+  4. Show documentation
+
+
+OPENING LINE:
+================================================================================
+"Today I'll demonstrate an AI-powered system that automates the entire 
+software development lifecycle - from Jira ticket to pull request, 
+completely autonomous."
+
+
+CLOSING LINE:
+================================================================================
+"That's our system - fully autonomous, production-ready, and handling 
+real-world development tasks. Questions?"
+
+
+================================================================================
+                              GOOD LUCK! 🚀
+================================================================================

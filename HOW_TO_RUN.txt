@@ -1,0 +1,149 @@
+================================================================================
+                    HOW TO RUN THIS PROJECT
+================================================================================
+
+QUICK START (3 STEPS):
+================================================================================
+
+STEP 1: Install Dependencies
+----------------------------
+cd d:\Jira-Agentic-Development-System
+pip install -r requirements.txt
+
+
+STEP 2: Start Backend
+----------------------------
+python backend/main.py
+
+Expected output:
+  INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
+✅ Backend is running!
+
+
+STEP 3: Test It
+----------------------------
+Open a NEW terminal and run:
+
+python test_authentication.py
+
+Expected: 7/7 tests passed ✅
+
+
+================================================================================
+ACCESS POINTS:
+================================================================================
+
+API Documentation:  http://localhost:8000/docs
+Health Check:       http://localhost:8000/health
+ReDoc:              http://localhost:8000/redoc
+
+
+================================================================================
+DEFAULT USERS:
+================================================================================
+
+Username: admin       Password: admin123      Role: admin
+Username: developer   Password: developer123  Role: developer
+Username: viewer      Password: viewer123     Role: viewer
+
+
+================================================================================
+LOGIN EXAMPLE:
+================================================================================
+
+Via Swagger UI (Easiest):
+1. Go to http://localhost:8000/docs
+2. Click "POST /api/auth/login"
+3. Click "Try it out"
+4. Enter: username=admin, password=admin123
+5. Click "Execute"
+6. Copy the access_token
+
+Via curl:
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=admin&password=admin123"
+
+
+================================================================================
+EXECUTE WORKFLOW:
+================================================================================
+
+Via Swagger UI:
+1. Go to http://localhost:8000/docs
+2. Click "POST /execute-ticket/{ticket_id}"
+3. Enter ticket ID: SCRUM-1
+4. Click "Execute"
+
+Via curl:
+curl -X POST "http://localhost:8000/execute-ticket/SCRUM-1"
+
+
+================================================================================
+TEST COMMANDS:
+================================================================================
+
+Test authentication:      python test_authentication.py
+Test Jira connection:     python test_jira_only.py
+Test Slack notifications: python test_slack.py
+Run diagnostics:          python fix_issues.py
+
+
+================================================================================
+DOCKER (ALTERNATIVE):
+================================================================================
+
+Build and run:            docker-compose up
+Run in background:        docker-compose up -d
+Stop:                     docker-compose down
+
+
+================================================================================
+TROUBLESHOOTING:
+================================================================================
+
+Port 8000 in use?
+  Windows:
+    netstat -ano | findstr :8000
+    taskkill /PID <PID> /F
+
+Module not found?
+  pip install -r requirements.txt
+
+Need detailed help?
+  See RUN_PROJECT.md for complete instructions
+
+
+================================================================================
+VERIFICATION:
+================================================================================
+
+Your system is working if:
+✅ Backend starts without errors
+✅ http://localhost:8000/health returns {"status":"healthy"}
+✅ python test_authentication.py shows 7/7 tests passed
+
+
+================================================================================
+DOCUMENTATION:
+================================================================================
+
+START_HERE.md ................. Start here guide
+QUICK_RUN.md .................. Quick 3-step guide
+RUN_PROJECT.md ................ Complete run instructions
+CONTINUE_HERE.md .............. What's next after setup
+README.md ..................... Full project documentation
+
+
+================================================================================
+THAT'S IT!
+================================================================================
+
+Your system is ready to run! 🚀
+
+Next: Visit http://localhost:8000/docs to explore the API
+
+Full Guide: See RUN_PROJECT.md
+
+================================================================================

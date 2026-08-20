@@ -6,12 +6,12 @@ Demonstrates the complete multi-agent pipeline with
 automatic QA retry on failures.
 
 Expected Flow:
-  1. Requirement Analysis → ✅
-  2. Developer (attempt 1) → ✅
-  3. QA (attempt 1) → ❌ FAILED
-  4. Developer (retry) → ✅
-  5. QA (retry) → ✅ PASSED
-  6. PR Generation → ✅
+  1. Requirement Analysis → [OK]
+  2. Developer (attempt 1) → [OK]
+  3. QA (attempt 1) → [FAIL] FAILED
+  4. Developer (retry) → [OK]
+  5. QA (retry) → [OK] PASSED
+  6. PR Generation → [OK]
 """
 
 import sys
@@ -54,7 +54,7 @@ def test_workflow_with_retry():
     print("\n" + "=" * 70)
     
     # Execute workflow with retry enabled
-    print("\n🚀 Starting workflow execution...")
+    print("\n[RUN] Starting workflow execution...")
     print("   Max retries: 2")
     print("   Expected: QA fails → Developer retry → QA passes")
     print("\n" + "-" * 70)
@@ -73,18 +73,18 @@ def test_workflow_with_retry():
     
     status = get_workflow_status(final_state)
     
-    print(f"\n📊 Final Status:")
+    print(f"\n[STATS] Final Status:")
     print(f"   Pipeline Status: {status['pipeline_status']}")
     print(f"   Current Stage: {status['current_stage']}")
     print(f"   Test Status: {status['test_status']}")
     print(f"   Retry Count: {status['retry_count']}")
     print(f"   PR Ready: {status['pr_ready']}")
     
-    print(f"\n✅ Completed Stages:")
+    print(f"\n[OK] Completed Stages:")
     for stage, emoji in status['progress'].items():
         print(f"   {emoji} {stage}")
     
-    print(f"\n📝 Summary:")
+    print(f"\n[PR] Summary:")
     print(f"   {status['summary']}")
     
     # Validation
@@ -94,7 +94,7 @@ def test_workflow_with_retry():
     
     checks = [
         ("Workflow completed", status['pipeline_status'] == 'completed'),
-        ("All stages ran", all(v == '✅' for v in status['progress'].values())),
+        ("All stages ran", all(v == '[OK]' for v in status['progress'].values())),
         ("Retry was triggered", status['retry_count'] > 0),
         ("Tests eventually passed", status['test_status'] in ['PASSED', 'FAILED']),
         ("Requirements extracted", len(final_state.get('functional_reqs', [])) > 0),
@@ -104,14 +104,14 @@ def test_workflow_with_retry():
     
     all_passed = True
     for check_name, passed in checks:
-        emoji = "✅" if passed else "❌"
+        emoji = "[OK]" if passed else "[FAIL]"
         print(f"   {emoji} {check_name}")
         if not passed:
             all_passed = False
     
     # Display retry information
     if status['retry_count'] > 0:
-        print(f"\n🔄 Retry Information:")
+        print(f"\n[RETRY] Retry Information:")
         print(f"   Total retries: {status['retry_count']}")
         print(f"   QA Notes: {final_state.get('qa_notes', 'N/A')[:200]}...")
     
@@ -123,9 +123,9 @@ def test_workflow_with_retry():
     
     print("\n" + "=" * 70)
     if all_passed:
-        print("  ✅ ALL VALIDATION CHECKS PASSED")
+        print("  [OK] ALL VALIDATION CHECKS PASSED")
     else:
-        print("  ⚠️  SOME VALIDATION CHECKS FAILED")
+        print("  [WARN]  SOME VALIDATION CHECKS FAILED")
     print("=" * 70 + "\n")
     
     return all_passed
@@ -179,7 +179,7 @@ def test_workflow_max_retries_exceeded():
         bool(final_state.get('pr_title'))
     )
     
-    emoji = "✅" if success else "❌"
+    emoji = "[OK]" if success else "[FAIL]"
     print(f"\n   {emoji} Workflow completed without retries: {success}")
     
     print("\n" + "=" * 70 + "\n")
@@ -204,7 +204,7 @@ def run_all_tests():
             passed = test_func()
             results.append((test_name, passed))
         except Exception as e:
-            print(f"\n❌ Test '{test_name}' crashed: {e}")
+            print(f"\n[FAIL] Test '{test_name}' crashed: {e}")
             import traceback
             traceback.print_exc()
             results.append((test_name, False))
@@ -215,7 +215,7 @@ def run_all_tests():
     print("=" * 70)
     
     for test_name, passed in results:
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[OK] PASS" if passed else "[FAIL] FAIL"
         print(f"  {status} | {test_name}")
     
     total = len(results)

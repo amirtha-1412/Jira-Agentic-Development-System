@@ -1,0 +1,170 @@
+═══════════════════════════════════════════════════════════════════
+  JIRA AGENTIC DEVELOPMENT SYSTEM - QUICK COMMANDS
+═══════════════════════════════════════════════════════════════════
+
+📋 SYSTEM STATUS:
+✅ Python 3.11.9 installed
+✅ Virtual environment exists
+✅ .env file configured
+
+═══════════════════════════════════════════════════════════════════
+🚀 STEP 1: ACTIVATE VIRTUAL ENVIRONMENT
+═══════════════════════════════════════════════════════════════════
+
+venv\Scripts\activate
+
+Expected: (venv) appears in your prompt
+
+═══════════════════════════════════════════════════════════════════
+📦 STEP 2: INSTALL/UPDATE DEPENDENCIES (if needed)
+═══════════════════════════════════════════════════════════════════
+
+pip install -r requirements.txt
+
+═══════════════════════════════════════════════════════════════════
+🧪 STEP 3: TEST COMPONENTS (Optional but Recommended)
+═══════════════════════════════════════════════════════════════════
+
+# Test LLM Connection
+python agents\llm.py
+
+# Test Code Validator (NEW - Enhanced Feature)
+python agents\developer_agent\code_validator.py
+
+# Test Enhanced Prompts (NEW - Enhanced Feature)
+python agents\developer_agent\enhanced_prompts.py
+
+# Test Repository Analyzer
+python agents\developer_agent\repository_analyzer.py
+
+═══════════════════════════════════════════════════════════════════
+🚀 STEP 4: START THE SERVER
+═══════════════════════════════════════════════════════════════════
+
+python backend\main.py
+
+Expected output:
+  INFO:     Uvicorn running on http://0.0.0.0:8000
+
+Server URLs:
+  - API: http://localhost:8000
+  - Docs: http://localhost:8000/docs
+  - Health: http://localhost:8000/health
+
+═══════════════════════════════════════════════════════════════════
+🧪 STEP 5: TEST API (Open NEW Terminal - Keep Server Running)
+═══════════════════════════════════════════════════════════════════
+
+# Test Health Check
+curl http://localhost:8000/health
+
+# Test Authentication (Login as admin)
+curl -X POST http://localhost:8000/api/auth/login -H "Content-Type: application/x-www-form-urlencoded" -d "username=admin&password=admin123"
+
+# Test Jira Connection
+curl http://localhost:8000/api/jira/test-connection
+
+# Fetch a Jira Ticket (replace SCRUM-123 with your ticket ID)
+curl http://localhost:8000/api/jira/ticket/SCRUM-123
+
+═══════════════════════════════════════════════════════════════════
+🎯 STEP 6: EXECUTE FULL WORKFLOW
+═══════════════════════════════════════════════════════════════════
+
+# Replace SCRUM-123 with your actual Jira ticket ID
+curl -X POST http://localhost:8000/execute-ticket/SCRUM-123
+
+This will:
+  1. ✅ Analyze requirements
+  2. ✅ Generate code (with NEW validation)
+  3. ✅ Run tests
+  4. ✅ Create PR
+  5. ✅ Send notifications
+
+Watch the server terminal for detailed logs including:
+  - Code validation results
+  - Quality scores (0-100)
+  - Error/warning counts
+  - Test results
+
+═══════════════════════════════════════════════════════════════════
+📊 WHAT TO LOOK FOR (NEW FEATURES)
+═══════════════════════════════════════════════════════════════════
+
+In the server logs, you'll now see:
+
+[DevAgent] ✅ Generated 2 file(s)
+[DevAgent] 🔍 Validating code quality...
+[DevAgent] Validation for backend/auth/login.py:
+  - Valid: True
+  - Quality Score: 85/100
+  - Errors: 0
+  - Warnings: 2
+
+This is the NEW validation system in action!
+
+═══════════════════════════════════════════════════════════════════
+🛑 STOP SERVER
+═══════════════════════════════════════════════════════════════════
+
+Press CTRL+C in the server terminal
+
+═══════════════════════════════════════════════════════════════════
+🔧 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+# If server won't start, check environment variables
+type .env
+
+# If LLM test fails, check GROQ_API_KEY
+echo %GROQ_API_KEY%
+
+# If Jira connection fails, check Jira credentials
+echo %JIRA_URL%
+echo %JIRA_EMAIL%
+
+# Reinstall dependencies if needed
+pip install -r requirements.txt --force-reinstall
+
+# Clear Python cache if needed
+del /s /q __pycache__
+
+═══════════════════════════════════════════════════════════════════
+📚 DOCUMENTATION
+═══════════════════════════════════════════════════════════════════
+
+Full Guide: STEP_BY_STEP_GUIDE.md
+Project Analysis: COMPLETE_PROJECT_ANALYSIS.md
+Optimization Details: DEVELOPER_AGENT_OPTIMIZATION.md
+Quick Start: OPTIMIZATION_QUICK_START.md
+Summary: PROJECT_ENHANCEMENT_SUMMARY.md
+
+═══════════════════════════════════════════════════════════════════
+🎯 DEFAULT USERS (for testing authentication)
+═══════════════════════════════════════════════════════════════════
+
+Admin:     username=admin     password=admin123
+Developer: username=developer password=developer123
+Viewer:    username=viewer    password=viewer123
+
+═══════════════════════════════════════════════════════════════════
+✅ QUICK CHECKLIST
+═══════════════════════════════════════════════════════════════════
+
+[ ] Virtual environment activated (venv\Scripts\activate)
+[ ] Dependencies installed (pip install -r requirements.txt)
+[ ] .env file configured with API keys
+[ ] LLM test passes (python agents\llm.py)
+[ ] Server starts (python backend\main.py)
+[ ] Health check works (curl http://localhost:8000/health)
+[ ] Ready to process tickets!
+
+═══════════════════════════════════════════════════════════════════
+🎉 YOU'RE READY TO GO!
+═══════════════════════════════════════════════════════════════════
+
+Start with: venv\Scripts\activate
+Then run:   python backend\main.py
+Then test:  curl -X POST http://localhost:8000/execute-ticket/YOUR-TICKET-ID
+
+═══════════════════════════════════════════════════════════════════

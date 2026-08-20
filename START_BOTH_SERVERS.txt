@@ -1,0 +1,104 @@
+═══════════════════════════════════════════════════════════════════════════════
+  HOW TO START BACKEND & FRONTEND - QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════════════════
+
+📋 YOU NEED 2 TERMINALS OPEN
+
+═══════════════════════════════════════════════════════════════════════════════
+TERMINAL 1 - BACKEND (FastAPI)
+═══════════════════════════════════════════════════════════════════════════════
+
+cd D:\Jira-Agentic-Development-System
+venv\Scripts\activate
+python backend\main.py
+
+✅ Backend running on: http://localhost:8000
+✅ API Docs: http://localhost:8000/docs
+
+KEEP THIS TERMINAL OPEN!
+
+═══════════════════════════════════════════════════════════════════════════════
+TERMINAL 2 - FRONTEND (React + Vite)
+═══════════════════════════════════════════════════════════════════════════════
+
+cd D:\Jira-Agentic-Development-System\frontend
+npm run dev
+
+✅ Frontend running on: http://localhost:5173
+
+KEEP THIS TERMINAL OPEN TOO!
+
+═══════════════════════════════════════════════════════════════════════════════
+OPEN BROWSER
+═══════════════════════════════════════════════════════════════════════════════
+
+http://localhost:5173
+
+You should see the frontend UI connected to the backend!
+
+═══════════════════════════════════════════════════════════════════════════════
+VERIFY CONNECTION
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Open frontend: http://localhost:5173
+2. Check browser console (F12) - should be no errors
+3. Try executing a workflow from the UI
+4. Watch Terminal 1 (backend) for logs
+
+═══════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════
+
+Problem: Backend won't start
+Solution: 
+  venv\Scripts\activate
+  pip install -r requirements.txt
+
+Problem: Frontend won't start
+Solution:
+  cd frontend
+  npm install
+
+Problem: "Port already in use"
+Solution:
+  # Find and kill process
+  netstat -ano | findstr :8000
+  taskkill /PID <PID> /F
+
+Problem: CORS errors in browser
+Solution: Backend is configured for port 5173. If you changed the port,
+         update backend/main.py CORS settings.
+
+═══════════════════════════════════════════════════════════════════════════════
+STOP SERVERS
+═══════════════════════════════════════════════════════════════════════════════
+
+In each terminal: Press CTRL+C
+
+═══════════════════════════════════════════════════════════════════════════════
+FOR DEMO/REVIEWERS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Start both servers (commands above)
+2. Open http://localhost:5173 in browser
+3. Show the UI
+4. Execute a workflow
+5. Point out:
+   - Frontend UI
+   - Backend logs in Terminal 1
+   - Quality scores in logs ⭐
+   - Real-time updates
+
+═══════════════════════════════════════════════════════════════════════════════
+SYSTEM OVERVIEW
+═══════════════════════════════════════════════════════════════════════════════
+
+Frontend (React + Vite)
+  ↓ HTTP Requests
+Backend (FastAPI)
+  ↓ Orchestrates
+Multi-Agent Workflow
+  ↓ Calls
+External APIs (Jira, GitHub, Groq, Slack)
+
+═══════════════════════════════════════════════════════════════════════════════

@@ -77,6 +77,10 @@ class PRAgent:
         test_status: str,
         qa_notes: str,
         retry_count: int = 0,
+        pytest_output: str = "",
+        tests_passed: int = 0,
+        tests_total: int = 0,
+        coverage_percent: int = 0,
     ) -> PRResult:
         """
         Generates a comprehensive PR description.
@@ -103,6 +107,10 @@ class PRAgent:
                 test_status=test_status,
                 qa_notes=qa_notes,
                 retry_count=retry_count,
+                pytest_output=pytest_output,
+                tests_passed=tests_passed,
+                tests_total=tests_total,
+                coverage_percent=coverage_percent,
             )
             
             # Generate PR with LLM
@@ -118,16 +126,16 @@ class PRAgent:
             result = self._parse_pr_response(response, ticket_id, summary)
             
             if result.success:
-                print(f"  [PRAgent] ✅ PR generated successfully")
+                print(f"  [PRAgent] [OK] PR generated successfully")
                 print(f"  [PRAgent] Title: {result.pr_title[:60]}...")
                 print(f"  [PRAgent] Labels: {', '.join(result.pr_labels)}")
             else:
-                print(f"  [PRAgent] ❌ PR generation failed: {result.error}")
+                print(f"  [PRAgent] [FAIL] PR generation failed: {result.error}")
             
             return result
         
         except Exception as e:
-            print(f"  [PRAgent] ❌ Exception: {e}")
+            print(f"  [PRAgent] [FAIL] Exception: {e}")
             return PRResult(
                 success=False,
                 error=str(e),
@@ -146,6 +154,10 @@ class PRAgent:
         test_status: str,
         qa_notes: str,
         retry_count: int,
+        pytest_output: str = "",
+        tests_passed: int = 0,
+        tests_total: int = 0,
+        coverage_percent: int = 0,
     ) -> str:
         """Builds the PR generation prompt."""
         
@@ -169,8 +181,20 @@ class PRAgent:
         
         prompt += f"\n## Test Results:\n"
         prompt += f"**Status**: {test_status}\n"
+        
+        if tests_total > 0:
+            prompt += f"**Tests Passed**: {tests_passed}/{tests_total}\n"
+            prompt += f"**Coverage**: {coverage_percent}%\n"
+            if pytest_output:
+                prompt += f"\n**Pytest Output**:\n```\n{pytest_output[:300]}\n```\n"
+        elif test_status == "VALIDATED":
+            prompt += f"**Note**: Code passed validation checks. Actual test execution was performed in validation-only mode.\n"
+            prompt += f"**Quality Score**: {requirements.get('quality_score', 'N/A')}/100\n"
+        else:
+            prompt += f"**Note**: No test execution data available.\n"
+        
         if qa_notes:
-            prompt += f"**QA Notes**:\n{qa_notes[:500]}\n"
+            prompt += f"\n**QA Notes**:\n{qa_notes[:500]}\n"
         
         prompt += f"\n## Risk Assessment:\n"
         prompt += f"**Risk Level**: {risk_level}\n"
@@ -199,13 +223,17 @@ Generate a comprehensive, professional pull request description.
 - [Change 2]
 - [Change 3]
 
-## ✅ Testing
-[Test status and coverage]
+## 📊 Testing
+**Test Status:** [PASSED/FAILED/PARTIAL/VALIDATED]
+**Test Coverage:** [X/Y tests passed, Z% coverage OR "Validation-only mode"]
+**QA Notes:** [Key testing insights]
 
-## 🔍 Review Focus
+**Note**: If status is VALIDATED, this means code passed static validation but actual pytest execution was not performed.
+
+## [SEARCH] Review Focus
 [What reviewers should pay attention to]
 
-## 📝 Checklist
+## [PR] Checklist
 - [ ] Code follows style guidelines
 - [ ] Tests pass
 - [ ] Documentation updated
@@ -222,7 +250,7 @@ Generate a comprehensive, professional pull request description.
 1. Title must be clear and concise (max 72 chars)
 2. Description must be comprehensive but readable
 3. Include all functional requirements implemented
-4. Mention test status clearly
+4. Mention test status clearly with actual numbers
 5. Add appropriate labels
 6. Suggest relevant reviewers
 7. Use professional tone

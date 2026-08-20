@@ -1,0 +1,113 @@
+# Code Quality Checks
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Code Complexity Analysis
+  # ─────────────────────────────────────────────
+  complexity:
+    name: Code Complexity
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install radon
+        run: pip install radon
+      
+      - name: Check cyclomatic complexity
+        run: |
+          echo "## Cyclomatic Complexity Report" >> $GITHUB_STEP_SUMMARY
+          radon cc agents/ backend/ workflows/ -a -s >> $GITHUB_STEP_SUMMARY
+      
+      - name: Check maintainability index
+        run: |
+          echo "## Maintainability Index" >> $GITHUB_STEP_SUMMARY
+          radon mi agents/ backend/ workflows/ -s >> $GITHUB_STEP_SUMMARY
+
+  # ─────────────────────────────────────────────
+  # Type Checking
+  # ─────────────────────────────────────────────
+  type-check:
+    name: Type Checking
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install mypy
+        run: |
+          pip install mypy
+          pip install -r requirements.txt
+      
+      - name: Run mypy
+        run: |
+          mypy agents/ backend/ workflows/ --ignore-missing-imports --no-strict-optional
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────
+  # Dependency Check
+  # ─────────────────────────────────────────────
+  dependencies:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install safety
+        run: pip install safety
+      
+      - name: Check for vulnerabilities
+        run: |
+          pip install -r requirements.txt
+          safety check --json
+        continue-on-error: true
+
+  # ─────────────────────────────────────────────
+  # Code Duplication Check
+  # ─────────────────────────────────────────────
+  duplication:
+    name: Code Duplication
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install jscpd
+        run: npm install -g jscpd
+      
+      - name: Check for duplicates
+        run: |
+          jscpd agents/ backend/ workflows/ --min-lines 5 --min-tokens 50 --format "markdown" > duplication-report.md
+        continue-on-error: true
+      
+      - name: Upload duplication report
+        uses: actions/upload-artifact@v3
+        with:
+          name: duplication-report
+          path: duplication-report.md
+        continue-on-error: true

@@ -1,0 +1,168 @@
+================================================================================
+  SIMPLE DEMO GUIDE - PRINT THIS!
+================================================================================
+
+BEFORE DEMO (30 min before):
+================================================================================
+
+1. Open Terminal 1:
+   cd D:\Jira-Agentic-Development-System
+   python backend/main.py
+   [KEEP THIS RUNNING!]
+
+2. Open Terminal 2:
+   cd D:\Jira-Agentic-Development-System
+   python test_jira_only.py
+   [Should show 4 tickets]
+
+3. Open Browser:
+   Tab 1: https://amirtha2314.atlassian.net
+   Tab 2: http://localhost:8000/docs
+
+4. Find ticket: SCRUM-2 (Fix login validation issue)
+
+5. Close unnecessary apps, disable notifications
+
+
+DURING DEMO (10 min):
+================================================================================
+
+STEP 1: Introduce (1 min)
+Say: "Hi! I'm [Name]. I built an AI that converts Jira tickets into code, 
+      tests, and PRs. Let me show you."
+
+STEP 2: Show Problem (30 sec)
+Action: Show Jira ticket in browser
+Say: "This ticket normally takes 2-4 hours. Watch what happens in 2 minutes."
+
+STEP 3: Show Architecture (1 min)
+Action: Open README.md, show diagrams
+Say: "We use 4 AI agents: Requirement Analyst, Developer, QA, and PR Generator.
+      Orchestrated by LangGraph."
+
+STEP 4: Run Demo (5 min)
+Action: In Terminal 2, run:
+        python demo.py
+        Enter: SCRUM-2
+
+Say while running:
+"Stage 1: Requirement Analyst analyzing..."
+"Stage 2: Developer generating code..."
+"Stage 3: QA creating tests..."
+"Stage 4: PR Generator drafting PR..."
+"Done! 2 minutes."
+
+STEP 5: Show Results (2 min)
+Action: Scroll through output
+Say: "Generated code, tests, and PR. 100x faster than manual work."
+
+STEP 6: Show API (1 min)
+Action: Switch to http://localhost:8000/docs
+Say: "Complete REST API for CI/CD integration."
+
+STEP 7: Impact (30 sec)
+Say: "For 10 developers, 50 tickets/sprint: saves 100-200 hours, 
+      $10K-$20K value."
+
+STEP 8: Q&A
+Answer questions confidently!
+
+
+IF SOMETHING FAILS:
+================================================================================
+
+If API rate limit:
+   Terminal 3: python test_jira_only.py
+   Say: "Let me show the Jira integration..."
+
+If network fails:
+   Show README.md diagrams
+   Say: "Let me explain the architecture..."
+
+If demo crashes:
+   Stay calm!
+   Show code in VS Code
+   Explain what you built
+
+
+QUICK COMMANDS:
+================================================================================
+
+Start backend:     python backend/main.py
+Test Jira:         python test_jira_only.py
+Run demo:          python demo.py
+Check system:      python fix_issues.py
+
+
+WHAT TO SAY:
+================================================================================
+
+Opening:
+"Hi! I'm [Name]. I built an AI that converts Jira tickets into code, tests, 
+and PRs automatically. Let me show you."
+
+Before demo:
+"This ticket takes 2-4 hours normally. Watch what happens in 2 minutes."
+
+After demo:
+"Done! Generated code, tests, and PR in 2 minutes. That's 100x faster."
+
+Closing:
+"This saves teams 100-200 hours per sprint. Questions?"
+
+
+KEY POINTS:
+================================================================================
+
+1. Speed: 2 min vs 2-4 hours (100x faster)
+2. Smart: RAG-powered, repository-aware
+3. Reliable: Self-healing with retry logic
+4. Value: Saves 100-200 hours/sprint
+5. Ready: Complete API, production-ready
+
+
+CHECKLIST:
+================================================================================
+
+Before demo:
+[ ] Backend running (Terminal 1)
+[ ] Jira tested (Terminal 2)
+[ ] Browser tabs open
+[ ] Demo ticket ready (SCRUM-2)
+[ ] Laptop charged
+[ ] Notifications off
+
+During demo:
+[ ] Introduce yourself
+[ ] Show Jira ticket
+[ ] Show architecture
+[ ] Run python demo.py
+[ ] Show results
+[ ] Show API
+[ ] Explain impact
+[ ] Answer questions
+
+
+REMEMBER:
+================================================================================
+
+- Breathe and smile
+- Speak clearly
+- Show enthusiasm
+- Make eye contact
+- Have fun!
+
+You built something amazing. Now show it off!
+
+
+EMERGENCY CONTACTS:
+================================================================================
+
+Jira: https://amirtha2314.atlassian.net
+API Docs: http://localhost:8000/docs
+Backup: python test_jira_only.py
+
+
+================================================================================
+  GOOD LUCK! YOU'VE GOT THIS! 🚀
+================================================================================

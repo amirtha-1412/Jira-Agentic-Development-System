@@ -1,0 +1,249 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║                   HOW TO START BACKEND & FRONTEND                             ║
+║                         Visual Step-by-Step Guide                             ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: OPEN FIRST TERMINAL (Backend)                                        │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  1. Open Command Prompt or PowerShell
+  2. Navigate to project:
+  
+     cd D:\Jira-Agentic-Development-System
+  
+  3. Activate virtual environment:
+  
+     venv\Scripts\activate
+  
+     You should see: (venv) in your prompt
+  
+  4. Start backend:
+  
+     python backend\main.py
+  
+  5. Wait for this message:
+  
+     ✅ INFO:     Uvicorn running on http://0.0.0.0:8000
+  
+  6. ⚠️  KEEP THIS TERMINAL OPEN! Don't close it!
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: OPEN SECOND TERMINAL (Frontend)                                      │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  1. Open a NEW Command Prompt or PowerShell
+  2. Navigate to frontend:
+  
+     cd D:\Jira-Agentic-Development-System\frontend
+  
+  3. Start frontend:
+  
+     npm run dev
+  
+  4. Wait for this message:
+  
+     ✅ Local:   http://localhost:5173/
+  
+  5. ⚠️  KEEP THIS TERMINAL OPEN TOO!
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: OPEN BROWSER                                                          │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  1. Open your web browser (Chrome, Firefox, Edge)
+  2. Go to:
+  
+     http://localhost:5173
+  
+  3. You should see the frontend application!
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: VERIFY CONNECTION                                                     │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Check 1: Frontend loads in browser
+  ✅ Check 2: No errors in browser console (Press F12)
+  ✅ Check 3: Backend terminal shows no errors
+  ✅ Check 4: Try a test action in the UI
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ VISUAL LAYOUT                                                                  │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐
+  │   TERMINAL 1        │  │   TERMINAL 2        │  │   BROWSER           │
+  │   (Backend)         │  │   (Frontend)        │  │                     │
+  ├─────────────────────┤  ├─────────────────────┤  ├─────────────────────┤
+  │ (venv) D:\Jira...   │  │ D:\Jira...\frontend │  │ localhost:5173      │
+  │                     │  │                     │  │                     │
+  │ python backend\     │  │ npm run dev         │  │ ┌─────────────────┐ │
+  │ main.py             │  │                     │  │ │  Frontend UI    │ │
+  │                     │  │ VITE v5.2.0 ready   │  │ │                 │ │
+  │ INFO: Uvicorn       │  │                     │  │ │  [Execute]      │ │
+  │ running on          │  │ Local:              │  │ │  [View Logs]    │ │
+  │ http://0.0.0.0:8000 │  │ http://localhost:   │  │ │  [Settings]     │ │
+  │                     │  │ 5173/               │  │ │                 │ │
+  │ [Logs appear here]  │  │                     │  │ └─────────────────┘ │
+  │                     │  │ [Logs appear here]  │  │                     │
+  └─────────────────────┘  └─────────────────────┘  └─────────────────────┘
+       ↑                        ↑                         ↑
+       │                        │                         │
+    Port 8000              Port 5173                 User Interface
+    (Backend API)          (Frontend Dev)            (Interacts with API)
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ WHAT YOU'LL SEE                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  TERMINAL 1 (Backend):
+  ═══════════════════════════════════════════════════════════════════════════
+  INFO:     Started server process [12345]
+  INFO:     Waiting for application startup.
+  INFO:     Application startup complete.
+  INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+  
+  [When frontend makes requests, you'll see:]
+  INFO:     127.0.0.1:xxxxx - "GET /api/... HTTP/1.1" 200 OK
+  ═══════════════════════════════════════════════════════════════════════════
+
+  TERMINAL 2 (Frontend):
+  ═══════════════════════════════════════════════════════════════════════════
+  VITE v5.2.0  ready in 500 ms
+  
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+  ═══════════════════════════════════════════════════════════════════════════
+
+  BROWSER:
+  ═══════════════════════════════════════════════════════════════════════════
+  [You'll see the React frontend UI with buttons and forms]
+  ═══════════════════════════════════════════════════════════════════════════
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ TEST THE CONNECTION                                                            │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  1. In the frontend UI, enter a Jira ticket ID (e.g., SCRUM-123)
+  2. Click "Execute Workflow" or similar button
+  3. Watch TERMINAL 1 (Backend) for logs:
+  
+     [ReqNode] 🔍 Starting requirement analysis
+     [DevNode] 💻 Starting code generation
+     [DevAgent] 🔍 Validating code quality...
+     [DevAgent] Quality Score: 85/100  ⭐
+  
+  4. Watch the frontend UI for progress updates
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ TROUBLESHOOTING                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  ❌ Problem: Backend won't start
+  ✅ Solution:
+     venv\Scripts\activate
+     pip install -r requirements.txt
+     python backend\main.py
+
+  ❌ Problem: Frontend won't start
+  ✅ Solution:
+     cd frontend
+     npm install
+     npm run dev
+
+  ❌ Problem: "Port already in use"
+  ✅ Solution:
+     netstat -ano | findstr :8000
+     taskkill /PID <PID> /F
+
+  ❌ Problem: CORS errors in browser console
+  ✅ Solution: Backend is configured for port 5173
+     Check backend/main.py CORS settings
+
+  ❌ Problem: Frontend shows "Network Error"
+  ✅ Solution:
+     1. Check backend is running (Terminal 1)
+     2. Check backend is on port 8000
+     3. Check frontend is trying to connect to http://localhost:8000
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ TO STOP SERVERS                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  In TERMINAL 1 (Backend): Press CTRL+C
+  In TERMINAL 2 (Frontend): Press CTRL+C
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ QUICK REFERENCE                                                                │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  Backend:
+  ────────────────────────────────────────────────────────────────────────────
+  cd D:\Jira-Agentic-Development-System
+  venv\Scripts\activate
+  python backend\main.py
+  
+  URL: http://localhost:8000
+  Docs: http://localhost:8000/docs
+
+  Frontend:
+  ────────────────────────────────────────────────────────────────────────────
+  cd D:\Jira-Agentic-Development-System\frontend
+  npm run dev
+  
+  URL: http://localhost:5173
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ FOR DEMO/REVIEWERS                                                             │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  1. Start both servers (see commands above)
+  2. Arrange windows side-by-side:
+     - Left: Terminal 1 (Backend logs)
+     - Right: Browser (Frontend UI)
+  3. Execute a workflow from the UI
+  4. Point out:
+     ✅ Frontend UI is clean and responsive
+     ✅ Backend logs show real-time processing
+     ✅ Quality scores appear in logs (85/100) ⭐
+     ✅ Full workflow completes automatically
+     ✅ Results appear in frontend
+
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│ SUCCESS CHECKLIST                                                              │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Backend terminal shows "Uvicorn running on http://0.0.0.0:8000"
+  ✅ Frontend terminal shows "Local: http://localhost:5173/"
+  ✅ Browser loads http://localhost:5173 without errors
+  ✅ Browser console (F12) shows no CORS errors
+  ✅ Can execute a workflow from the UI
+  ✅ Backend logs show incoming requests
+  ✅ Frontend shows results from backend
+
+
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║                            🎉 YOU'RE READY!                                   ║
+║                                                                               ║
+║                    Both servers are running and connected!                    ║
+║                                                                               ║
+║                    Backend:  http://localhost:8000                            ║
+║                    Frontend: http://localhost:5173                            ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝

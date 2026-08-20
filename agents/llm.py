@@ -18,12 +18,19 @@ from langchain_core.messages import HumanMessage, SystemMessage
 load_dotenv()
 
 # ─── Model config ────────────────────────────
-DEFAULT_MODEL       = "llama-3.3-70b-versatile"
-FALLBACK_MODEL      = "llama-3.1-8b-instant"  # Updated: llama3-8b-8192 is decommissioned
+DEFAULT_MODEL       = "llama-3.3-70b-versatile"  # Using Llama as primary (Qwen not available)
+FALLBACK_MODEL      = "llama-3.1-8b-instant"
+LLAMA_MODEL         = "llama-3.3-70b-versatile"  # Llama model alternative
 DEFAULT_TEMPERATURE = 0.2    # low = more deterministic code output
-DEFAULT_MAX_TOKENS  = 2048
+DEFAULT_MAX_TOKENS  = 4096   # raised from 2048 — prevents mid-function truncation
+CODE_MAX_TOKENS     = 6144   # for code-generation calls with large output
 MAX_RETRIES         = 3
 RETRY_DELAY         = 2  # seconds
+TRANSIENT_ERRORS    = ("connection", "timeout", "503", "502", "500")
+RATE_LIMIT_COOLDOWN = 5  # seconds to wait between calls to avoid rate limits
+
+# Global variable to track last API call time
+_last_api_call_time = 0
 
 
 # ─────────────────────────────────────────────
@@ -72,16 +79,18 @@ def get_llm(
 
 def call_llm(
     user_prompt:   str,
-    system_prompt: str  = "You are a helpful software engineering assistant.",
-    model:         str  = DEFAULT_MODEL,
-    temperature:   float= DEFAULT_TEMPERATURE,
-    use_fallback:  bool = True,
+    system_prompt: str   = "You are a helpful software engineering assistant.",
+    model:         str   = DEFAULT_MODEL,
+    temperature:   float = DEFAULT_TEMPERATURE,
+    max_tokens:    int   = DEFAULT_MAX_TOKENS,
+    use_fallback:  bool  = True,
 ) -> str:
     """
     Calls the LLM with a user + optional system prompt.
     Returns the text response string.
     
     Includes automatic retry logic and fallback to smaller model on rate limits.
+    NOW WITH RATE LIMIT PROTECTION: Adds delays between calls to avoid hitting limits.
 
     Args:
         user_prompt:   The user message
@@ -97,17 +106,30 @@ def call_llm(
         EnvironmentError: On missing API key
         Exception: On API failure after all retries
     """
+    global _last_api_call_time
+    
+    # RATE LIMIT PROTECTION: Add delay between calls
+    time_since_last_call = time.time() - _last_api_call_time
+    if time_since_last_call < RATE_LIMIT_COOLDOWN:
+        wait_time = RATE_LIMIT_COOLDOWN - time_since_last_call
+        print(f"[WAIT] Rate limit protection: waiting {wait_time:.1f}s...")
+        time.sleep(wait_time)
+    
     last_error = None
     
     # Try primary model with retries
     for attempt in range(MAX_RETRIES):
         try:
-            llm = get_llm(model=model, temperature=temperature)
+            llm = get_llm(model=model, temperature=temperature, max_tokens=max_tokens)
             messages = [
                 SystemMessage(content=system_prompt),
                 HumanMessage(content=user_prompt),
             ]
             response = llm.invoke(messages)
+            
+            # Update last call time on success
+            _last_api_call_time = time.time()
+            
             return response.content.strip()
 
         except EnvironmentError:
@@ -117,32 +139,42 @@ def call_llm(
             error_str = str(e)
             last_error = e
             
-            # Check if it's a rate limit error
-            if "rate_limit" in error_str.lower() or "429" in error_str:
-                print(f"⚠️  Rate limit hit on {model} (attempt {attempt + 1}/{MAX_RETRIES})")
-                
-                # Try fallback model if enabled and not already using it
-                if use_fallback and model != FALLBACK_MODEL:
-                    print(f"🔄 Switching to fallback model: {FALLBACK_MODEL}")
+            # Check error type
+            is_rate_limit = "rate_limit" in error_str.lower() or "429" in error_str
+            is_transient = any(t in error_str.lower() for t in TRANSIENT_ERRORS)
+
+            if is_rate_limit or is_transient:
+                if is_rate_limit:
+                    print(f"[WARN] Rate limit hit on {model} (attempt {attempt + 1}/{MAX_RETRIES})")
+                else:
+                    print(f"[WARN] Transient error on {model} (attempt {attempt + 1}/{MAX_RETRIES}): {error_str[:80]}")
+
+                # Try fallback model on rate limit
+                if is_rate_limit and use_fallback and model != FALLBACK_MODEL:
+                    print(f"[INFO] Switching to fallback model: {FALLBACK_MODEL}")
                     try:
-                        llm = get_llm(model=FALLBACK_MODEL, temperature=temperature, max_tokens=DEFAULT_MAX_TOKENS)
+                        llm = get_llm(model=FALLBACK_MODEL, temperature=temperature, max_tokens=max_tokens)
                         messages = [
                             SystemMessage(content=system_prompt),
                             HumanMessage(content=user_prompt),
                         ]
                         response = llm.invoke(messages)
+                        
+                        # Update last call time even for fallback
+                        _last_api_call_time = time.time()
+                        
                         return response.content.strip()
                     except Exception as fallback_error:
-                        print(f"❌ Fallback model also failed: {str(fallback_error)}")
+                        print(f"[ERROR] Fallback model also failed: {str(fallback_error)}")
                         last_error = fallback_error
-                
+
                 # Wait before retry
                 if attempt < MAX_RETRIES - 1:
                     wait_time = RETRY_DELAY * (attempt + 1)
-                    print(f"⏳ Waiting {wait_time}s before retry...")
+                    print(f"[INFO] Waiting {wait_time}s before retry...")
                     time.sleep(wait_time)
             else:
-                # Non-rate-limit error, raise immediately
+                # Non-transient error — raise immediately
                 raise RuntimeError(f"LLM call failed: {error_str}")
     
     # All retries exhausted

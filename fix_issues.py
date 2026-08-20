@@ -44,9 +44,9 @@ def check_environment():
     for var_name, description in required_vars.items():
         value = os.getenv(var_name)
         if value:
-            print(f"   ✅ {var_name}: Set")
+            print(f"   [OK] {var_name}: Set")
         else:
-            print(f"   ❌ {var_name}: NOT SET")
+            print(f"   [FAIL] {var_name}: NOT SET")
             issues.append(f"Missing {var_name} - {description}")
     
     # Check optional variables
@@ -59,9 +59,9 @@ def check_environment():
     for var_name, description in optional_vars.items():
         value = os.getenv(var_name)
         if value:
-            print(f"   ✅ {var_name}: Set")
+            print(f"   [OK] {var_name}: Set")
         else:
-            print(f"   ⚠️  {var_name}: Not set - {description}")
+            print(f"   [WARN]  {var_name}: Not set - {description}")
             warnings.append(f"{var_name} not set - {description}")
     
     return issues, warnings
@@ -73,13 +73,13 @@ def check_groq_api():
     
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
-        print("   ❌ GROQ_API_KEY not set")
+        print("   [FAIL] GROQ_API_KEY not set")
         return ["GROQ_API_KEY not configured"]
     
-    print(f"   ✅ API Key: {api_key[:15]}...")
+    print(f"   [OK] API Key: {api_key[:15]}...")
     
     # Test API connection
-    print("\n   🔍 Testing API connection...")
+    print("\n   [SEARCH] Testing API connection...")
     try:
         from agents.llm import call_llm
         
@@ -89,16 +89,16 @@ def check_groq_api():
             use_fallback=True,
         )
         
-        print(f"   ✅ API Response: {response}")
-        print(f"   ✅ Groq API is working!")
+        print(f"   [OK] API Response: {response}")
+        print(f"   [OK] Groq API is working!")
         return []
         
     except Exception as e:
         error_str = str(e)
-        print(f"   ❌ API Error: {error_str}")
+        print(f"   [FAIL] API Error: {error_str}")
         
         if "rate_limit" in error_str.lower() or "429" in error_str:
-            print("\n   ⚠️  RATE LIMIT DETECTED")
+            print("\n   [WARN]  RATE LIMIT DETECTED")
             print("   Solutions:")
             print("   1. Wait for daily reset (resets every 24 hours)")
             print("   2. Upgrade to Groq Dev Tier")
@@ -106,7 +106,7 @@ def check_groq_api():
             print("   4. Visit: https://console.groq.com/settings/billing")
             return ["Groq API rate limit reached"]
         elif "401" in error_str or "unauthorized" in error_str.lower():
-            print("\n   ❌ AUTHENTICATION FAILED")
+            print("\n   [FAIL] AUTHENTICATION FAILED")
             print("   Solutions:")
             print("   1. Check your GROQ_API_KEY in .env")
             print("   2. Generate new key at: https://console.groq.com/keys")
@@ -123,13 +123,13 @@ def check_jira_connection():
     missing = [var for var in required if not os.getenv(var)]
     
     if missing:
-        print(f"   ❌ Missing variables: {', '.join(missing)}")
+        print(f"   [FAIL] Missing variables: {', '.join(missing)}")
         return [f"Missing Jira configuration: {', '.join(missing)}"]
     
-    print("   ✅ All Jira variables set")
+    print("   [OK] All Jira variables set")
     
     # Test connection
-    print("\n   🔍 Testing Jira connection...")
+    print("\n   [SEARCH] Testing Jira connection...")
     try:
         from backend.jira.connector import JiraConnector
         
@@ -137,23 +137,23 @@ def check_jira_connection():
         result = connector.get_open_tickets(max_results=1)
         
         if result.get("success"):
-            print(f"   ✅ Connected to: {connector.base_url}")
-            print(f"   ✅ Project: {connector.project}")
-            print(f"   ✅ Jira connection working!")
+            print(f"   [OK] Connected to: {connector.base_url}")
+            print(f"   [OK] Project: {connector.project}")
+            print(f"   [OK] Jira connection working!")
             return []
         else:
             error = result.get("error", "Unknown error")
-            print(f"   ❌ Connection failed: {error}")
+            print(f"   [FAIL] Connection failed: {error}")
             
             if "401" in error or "Unauthorized" in error:
-                print("\n   ❌ AUTHENTICATION FAILED")
+                print("\n   [FAIL] AUTHENTICATION FAILED")
                 print("   Solutions:")
                 print("   1. Check JIRA_EMAIL and JIRA_API_KEY in .env")
                 print("   2. Generate new API token at:")
                 print("      https://id.atlassian.com/manage-profile/security/api-tokens")
                 return ["Invalid Jira credentials"]
             elif "404" in error:
-                print("\n   ❌ PROJECT NOT FOUND")
+                print("\n   [FAIL] PROJECT NOT FOUND")
                 print("   Solutions:")
                 print("   1. Check JIRA_PROJECT_KEY in .env")
                 print("   2. Verify project exists in your Jira")
@@ -162,7 +162,7 @@ def check_jira_connection():
                 return [f"Jira connection error: {error}"]
                 
     except Exception as e:
-        print(f"   ❌ Error: {str(e)}")
+        print(f"   [FAIL] Error: {str(e)}")
         return [f"Jira connection error: {str(e)}"]
 
 
@@ -187,14 +187,14 @@ def check_dependencies():
     for package in required_packages:
         try:
             __import__(package.replace("-", "_"))
-            print(f"   ✅ {package}")
+            print(f"   [OK] {package}")
         except ImportError:
-            print(f"   ❌ {package}: NOT INSTALLED")
+            print(f"   [FAIL] {package}: NOT INSTALLED")
             missing.append(package)
     
     if missing:
-        print(f"\n   ⚠️  Missing packages: {', '.join(missing)}")
-        print(f"   💡 Install with: pip install {' '.join(missing)}")
+        print(f"\n   [WARN]  Missing packages: {', '.join(missing)}")
+        print(f"   [IDEA] Install with: pip install {' '.join(missing)}")
         return [f"Missing packages: {', '.join(missing)}"]
     
     return []
@@ -205,14 +205,14 @@ def suggest_fixes(all_issues):
     print_header("SUGGESTED FIXES")
     
     if not all_issues:
-        print("\n   ✅ No issues found! System is healthy.")
+        print("\n   [OK] No issues found! System is healthy.")
         return
     
     print("\n🔧 Issues Found:")
     for i, issue in enumerate(all_issues, 1):
         print(f"   {i}. {issue}")
     
-    print("\n💡 Quick Fixes:")
+    print("\n[IDEA] Quick Fixes:")
     
     # Categorize issues
     has_env_issues = any("Missing" in issue and "GROQ" not in issue and "JIRA" not in issue for issue in all_issues)
@@ -278,15 +278,15 @@ def main():
     print_header("DIAGNOSTIC SUMMARY")
     
     if not all_issues:
-        print("\n   ✅ ALL CHECKS PASSED!")
+        print("\n   [OK] ALL CHECKS PASSED!")
         print("   🎉 Your system is healthy and ready to use!")
         
         if all_warnings:
-            print("\n   ℹ️  Optional Improvements:")
+            print("\n   [INFO]  Optional Improvements:")
             for warning in all_warnings:
                 print(f"      • {warning}")
     else:
-        print(f"\n   ⚠️  Found {len(all_issues)} issue(s)")
+        print(f"\n   [WARN]  Found {len(all_issues)} issue(s)")
         suggest_fixes(all_issues)
     
     print("\n" + "=" * 70)
@@ -301,10 +301,10 @@ if __name__ == "__main__":
         success = main()
         sys.exit(0 if success else 1)
     except KeyboardInterrupt:
-        print("\n\n⚠️  Diagnostic interrupted by user.")
+        print("\n\n[WARN]  Diagnostic interrupted by user.")
         sys.exit(1)
     except Exception as e:
-        print(f"\n\n❌ Unexpected error: {str(e)}")
+        print(f"\n\n[FAIL] Unexpected error: {str(e)}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

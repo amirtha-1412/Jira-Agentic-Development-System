@@ -289,7 +289,7 @@ if __name__ == "__main__":
     
     for tc in test_states:
         result = should_retry(tc["state"])
-        status = "✅" if result == tc["expected"] else "❌"
+        status = "[OK]" if result == tc["expected"] else "[FAIL]"
         print(f"  {status} {tc['name']}: {result} (expected {tc['expected']})")
     
     # Test 2: Retry reason generation

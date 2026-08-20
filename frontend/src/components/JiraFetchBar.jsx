@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { analyzeFromJira } from '../services/api'
+import { fetchJiraTicket } from '../services/api'
 
 const JiraIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -31,14 +31,14 @@ export default function JiraFetchBar({ onFetched, backendStatus, onLog }) {
     onLog?.(`Fetching ticket "${ticketId.trim()}" from Jira...`, 'agent')
 
     try {
-      const res  = await analyzeFromJira(ticketId.trim())
+      const res  = await fetchJiraTicket(ticketId.trim())
       const data = res.data
 
-      // Build ticket object from response
+      // Build ticket object from raw Jira response
       const fetched = {
         ticket_id:   data.ticket_id   || ticketId,
         title:       data.title       || data.summary     || `Ticket ${ticketId}`,
-        description: data.description || data.raw_response || '',
+        description: data.description || '',
         priority:    data.priority    || 'Medium',
         issue_type:  data.issue_type  || 'Task',
         status:      data.status      || 'Open',

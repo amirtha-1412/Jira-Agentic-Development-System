@@ -18,13 +18,13 @@ def test_workflow_routes_import():
     
     try:
         from workflows.workflow_routes import router
-        print("  ✅ Workflow routes imported successfully")
-        print(f"  ✅ Router type: {type(router)}")
-        print(f"  ✅ Router prefix: {router.prefix}")
-        print(f"  ✅ Router tags: {router.tags}")
+        print("  [OK] Workflow routes imported successfully")
+        print(f"  [OK] Router type: {type(router)}")
+        print(f"  [OK] Router prefix: {router.prefix}")
+        print(f"  [OK] Router tags: {router.tags}")
         return True
     except Exception as e:
-        print(f"  ❌ Import failed: {e}")
+        print(f"  [FAIL] Import failed: {e}")
         return False
 
 
@@ -42,17 +42,17 @@ def test_backend_integration():
             backend_imported = True
         except ModuleNotFoundError as e:
             if "chromadb" in str(e):
-                print("  ⚠️  ChromaDB not installed (optional dependency)")
-                print("  ✅ Workflow routes would be registered if ChromaDB was available")
+                print("  [WARN]  ChromaDB not installed (optional dependency)")
+                print("  [OK] Workflow routes would be registered if ChromaDB was available")
                 backend_imported = True
             else:
                 raise
         
         if backend_imported:
-            print("  ✅ Backend imports workflow routes")
+            print("  [OK] Backend imports workflow routes")
             return True
     except Exception as e:
-        print(f"  ❌ Backend integration failed: {e}")
+        print(f"  [FAIL] Backend integration failed: {e}")
         return False
 
 
@@ -69,13 +69,13 @@ def test_workflow_functions():
             get_workflow_status,
         )
         
-        print("  ✅ build_workflow_graph imported")
-        print("  ✅ compile_workflow imported")
-        print("  ✅ get_workflow_status imported")
+        print("  [OK] build_workflow_graph imported")
+        print("  [OK] compile_workflow imported")
+        print("  [OK] get_workflow_status imported")
         
         # Test graph compilation
         workflow = compile_workflow()
-        print(f"  ✅ Workflow compiled: {type(workflow)}")
+        print(f"  [OK] Workflow compiled: {type(workflow)}")
         
         # Test status function
         mock_state = {
@@ -91,12 +91,12 @@ def test_workflow_functions():
         }
         
         status = get_workflow_status(mock_state)
-        print(f"  ✅ Status function works: {status['ticket_id']}")
-        print(f"  ✅ Progress indicators: {status['progress']}")
+        print(f"  [OK] Status function works: {status['ticket_id']}")
+        print(f"  [OK] Progress indicators: {status['progress']}")
         
         return True
     except Exception as e:
-        print(f"  ❌ Workflow functions failed: {e}")
+        print(f"  [FAIL] Workflow functions failed: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -130,14 +130,14 @@ def test_route_definitions():
         all_found = True
         for expected in expected_routes:
             if expected in routes:
-                print(f"  ✅ {expected}")
+                print(f"  [OK] {expected}")
             else:
-                print(f"  ❌ Missing: {expected}")
+                print(f"  [FAIL] Missing: {expected}")
                 all_found = False
         
         return all_found
     except Exception as e:
-        print(f"  ❌ Route definitions test failed: {e}")
+        print(f"  [FAIL] Route definitions test failed: {e}")
         return False
 
 
@@ -160,7 +160,7 @@ def run_api_tests():
             passed = test_func()
             results.append((test_name, passed))
         except Exception as e:
-            print(f"\n❌ Test '{test_name}' crashed: {e}")
+            print(f"\n[FAIL] Test '{test_name}' crashed: {e}")
             results.append((test_name, False))
     
     # Summary
@@ -169,7 +169,7 @@ def run_api_tests():
     print("=" * 70)
     
     for test_name, passed in results:
-        status = "✅ PASS" if passed else "❌ FAIL"
+        status = "[OK] PASS" if passed else "[FAIL] FAIL"
         print(f"  {status} | {test_name}")
     
     total = len(results)

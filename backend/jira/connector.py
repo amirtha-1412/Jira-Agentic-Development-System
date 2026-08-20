@@ -162,25 +162,25 @@ def test_jira_connector():
 
     try:
         connector = JiraConnector()
-        print(f"✅ Config loaded  → Project: {connector.project}")
-        print(f"✅ Base URL       → {connector.base_url}")
+        print(f"[OK] Config loaded  → Project: {connector.project}")
+        print(f"[OK] Base URL       → {connector.base_url}")
 
         print("\n📋 Fetching open tickets...")
         result = connector.get_open_tickets(max_results=5)
 
         if result["success"]:
-            print(f"✅ Connected! Total open tickets: {result['total']}")
+            print(f"[OK] Connected! Total open tickets: {result['total']}")
             print("-" * 40)
             for t in result["tickets"]:
                 print(f"  [{t['ticket_id']}] {t['summary']}")
                 print(f"    Status: {t['status']} | Priority: {t['priority']} | Type: {t['issue_type']}")
         else:
-            print(f"❌ Failed: {result['error']}")
+            print(f"[FAIL] Failed: {result['error']}")
 
     except EnvironmentError as e:
-        print(f"❌ Config error: {e}")
+        print(f"[FAIL] Config error: {e}")
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"[FAIL] Unexpected error: {e}")
 
     print("=" * 50 + "\n")
 
